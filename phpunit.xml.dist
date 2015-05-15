@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<phpunit
+        bootstrap="tests/TestBootstrapper.php"
+        colors="true"
+        backupGlobals="false"
+        stopOnFailure="false">
+
+    <testsuites>
+        <testsuite name="Entirety">
+            <directory>./tests/Integration/</directory>
+            <directory>./tests/Unit/</directory>
+        </testsuite>
+        <testsuite name="Integration">
+            <directory>./tests/Integration/</directory>
+        </testsuite>
+        <testsuite name="Unit">
+            <directory>./tests/Unit/</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory suffix=".php">./src/</directory>
+        </whitelist>
+        <blacklist>
+            <directory>./vendor/</directory>
+        </blacklist>
+    </filter>
+</phpunit>
