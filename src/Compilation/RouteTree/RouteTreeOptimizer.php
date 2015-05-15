@@ -196,30 +196,59 @@ class RouteTreeOptimizer
             return $nodeCollection;
         }
 
+        $children = [];
+        $previous = array_shift($nodes);
+
+        foreach($nodes as $node) {
+            $parent = $this->extractCommonParentNode($previous, $node);
+
+            if($parent) {
+                $previous = $parent;
+            } else {
+                $children[] = $previous;
+                $previous = $node;
+            }
+        }
+        $children[] = $previous;
+
+        return new ChildrenNodeCollection($children);
+    }
+
+    /**
+     * @param RouteTreeNode $node1
+     * @param RouteTreeNode $node2
+     *
+     * @return RouteTreeNode|null
+     */
+    protected function extractCommonParentNode(RouteTreeNode $node1, RouteTreeNode $node2)
+    {
         $matcherCompare = function (SegmentMatcher $a, SegmentMatcher $b) {
             return strcmp($a->getHash(), $b->getHash());
         };
 
-        $commonMatchers = reset($nodes)->getMatchers();
-
-        foreach($nodes as $node) {
-            $commonMatchers = array_uintersect_assoc($commonMatchers, $node->getMatchers(), $matcherCompare);
-        }
+        $commonMatchers = array_uintersect_assoc($node1->getMatchers(), $node2->getMatchers(), $matcherCompare);
 
         if(empty($commonMatchers)) {
-            return $nodeCollection;
+            return null;
         }
 
         $children = [];
 
-        foreach($nodes as $key => $node) {
+        /** @var RouteTreeNode[] $nodes */
+        $nodes = [$node1, $node2];
+
+        foreach($nodes as $node) {
             $specificMatchers = array_udiff_assoc($node->getMatchers(), $commonMatchers, $matcherCompare);
 
-            $children[$key] = $node->update($specificMatchers, $node->getContents());
+            if(empty($specificMatchers) && $node->isParentNode()) {
+                foreach($node->getContents()->getChildren() as $childNode) {
+                    $children[] = $childNode;
+                }
+            } else {
+                $children[] = $node->update($specificMatchers, $node->getContents());
+            }
         }
 
-        $parentNode = new RouteTreeNode($commonMatchers, new ChildrenNodeCollection($children));
-
-        return new ChildrenNodeCollection([$parentNode]);
+        return new RouteTreeNode($commonMatchers, ChildrenNodeCollection::nonExclusive($children));
     }
 }

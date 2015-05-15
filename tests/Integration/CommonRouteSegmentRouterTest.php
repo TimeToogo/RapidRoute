@@ -25,6 +25,7 @@ class CommonRouteSegmentRouterTest extends RouterTestBase
         $routes->get('/route3/{p1}/{p2}/{p3}', ['name' => 'route3']);
         $routes->get('/route4/{p1}/{p2}/{p3}', ['name' => 'route4']);
         $routes->get('/route5/{p_1}/{p_2}/{p_3}', ['name' => 'route5']);
+        $routes->get('/route6/{p_1}/{p2}/{p_3}', ['name' => 'route6']);
     }
 
     /**
@@ -46,6 +47,8 @@ class CommonRouteSegmentRouterTest extends RouterTestBase
             ['GET', '/route3/a/b/c', RouterResult::found(['name' => 'route3'], ['p1' => 'a', 'p2' => 'b', 'p3' => 'c'])],
             ['GET', '/route4/a/b/c', RouterResult::found(['name' => 'route4'], ['p1' => 'a', 'p2' => 'b', 'p3' => 'c'])],
             ['GET', '/route5/a/b/c', RouterResult::found(['name' => 'route5'], ['p_1' => 'a', 'p_2' => 'b', 'p_3' => 'c'])],
+            ['GET', '/route6/a/1/c', RouterResult::notFound()],
+            ['GET', '/route6/a/b/c', RouterResult::found(['name' => 'route6'], ['p_1' => 'a', 'p2' => 'b', 'p_3' => 'c'])],
             ['GET', '/route1/a/123/c', RouterResult::notFound()],
         ];
     }

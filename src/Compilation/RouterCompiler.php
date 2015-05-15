@@ -117,10 +117,10 @@ PHP;
         $code->append('}');
     }
 
-    protected function compileSegmentNodes(PhpBuilder $code, ChildrenNodeCollection $nodes)
+    protected function compileSegmentNodes(PhpBuilder $code, ChildrenNodeCollection $nodes, $notFound = true)
     {
-        $code->appendLine('switch (true) {');
-        $code->indent++;
+        $exclusiveCases = $nodes->areChildrenExclusive();
+        $first = true;
 
         foreach ($nodes->getChildren() as $node) {
             /** @var SegmentMatcher[] $segmentMatchers */
@@ -138,7 +138,8 @@ PHP;
                 $conditions[] = $matcher->getConditionExpression($segmentVariables[$segmentDepth], $count++);
             }
 
-            $code->appendLine('case ' . implode(' && ', $conditions) . ':');
+            $conditional = ($first || !$exclusiveCases) ? 'if' : 'elseif';
+            $code->appendLine($conditional . ' (' . implode(' && ', $conditions) . ') {');
             $code->indent++;
 
             $count = 0;
@@ -153,20 +154,27 @@ PHP;
             if ($node->isLeafNode()) {
                 $this->compiledRouteHttpMethodMatch($code, $node->getContents());
             } else {
-                $this->compileSegmentNodes($code, $node->getContents());
+                $this->compileSegmentNodes($code, $node->getContents(), $exclusiveCases);
             }
 
-            $code->appendLine('break;');
             $code->indent--;
+            $code->appendLine('}');
+            $first = false;
         }
 
-        $code->appendLine('default:');
-        $code->indent++;
-        $this->compileNotFound($code);
-        $code->indent--;
+        if($notFound) {
+            if($exclusiveCases) {
+                $code->appendLine('else {');
+                $code->indent++;
+            }
 
-        $code->indent--;
-        $code->appendLine('}');
+            $this->compileNotFound($code);
+
+            if($exclusiveCases) {
+                $code->indent--;
+                $code->appendLine('}');
+            }
+        }
     }
 
     protected function compiledRouteHttpMethodMatch(PhpBuilder $code, MatchedRouteDataMap $routeDataMap)
