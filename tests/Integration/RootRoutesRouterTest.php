@@ -8,7 +8,7 @@ use RapidRoute\RouterResult;
 /**
  * @author Elliot Levin <elliotlevin@hotmail.com>
  */
-class RouteRoutesRouterTest extends RouterTestBase
+class RootRoutesRouterTest extends RouterTestBase
 {
     protected function compiledFileName()
     {
