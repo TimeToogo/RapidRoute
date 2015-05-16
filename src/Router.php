@@ -73,11 +73,13 @@ class Router
      */
     public function match($httpMethod, $uri)
     {
-        if ($this->compiledRouter === null && !$this->developmentMode && file_exists($this->compiledRouterPath)) {
-            $this->compiledRouter = require $this->compiledRouterPath;
-        } else {
-            $this->saveCompiledRouter();
-            $this->compiledRouter = require $this->compiledRouterPath;
+        if($this->compiledRouter === null) {
+            if (!$this->developmentMode && file_exists($this->compiledRouterPath)) {
+                $this->compiledRouter = require $this->compiledRouterPath;
+            } else {
+                $this->saveCompiledRouter();
+                $this->compiledRouter = require $this->compiledRouterPath;
+            }
         }
 
         $compiledRouter = $this->compiledRouter;

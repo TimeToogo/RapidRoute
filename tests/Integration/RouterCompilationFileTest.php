@@ -37,6 +37,8 @@ class RouterCompilationFileTest extends RapidRouteTest
         $this->assertFileNotExists($this->compiledFilePath);
 
         $resultOne = $router->match('GET', '/');
+        // Should only compile router the first time
+        $router->match('GET', '/');
 
         $this->assertSame(1, $called, 'Should have called route definitions once');
         $this->assertFileExists($this->compiledFilePath);
@@ -96,6 +98,8 @@ class RouterCompilationFileTest extends RapidRouteTest
         // New router in dev mode should not reuse compiled routes
         $newRouter = new Router($this->compiledFilePath, $definitions);
         $newRouter->setDevelopmentMode(true);
+        $newRouter->match('HEAD', '/abc');
+        // Should only reload once
         $newRouter->match('HEAD', '/abc');
 
         $this->assertTrue($newRouter->isDevelopmentMode());
