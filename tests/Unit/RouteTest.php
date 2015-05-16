@@ -21,9 +21,23 @@ class RouteTest extends RapidRouteTest
 
     public function testConvertsHttpMethodToUppercase()
     {
-        $route = new Route(['get', 'pAtch'], [], ['data']);
+        $route = new Route(['post', 'pAtch'], [], ['data']);
 
-        $this->assertSame(['GET', 'PATCH'], $route->getHttpMethods());
+        $this->assertSame(['POST', 'PATCH'], $route->getHttpMethods());
+    }
+
+    public function testAllowsHeadRequestIfGetIsSpecified()
+    {
+        $route = new Route(['get'], [], ['data']);
+
+        $this->assertSame(['GET', 'HEAD'], $route->getHttpMethods());
+    }
+
+    public function testWillNotDuplicatedHeadRequest()
+    {
+        $route = new Route(['GET', 'POST'], [], ['data']);
+
+        $this->assertSame(['GET', 'POST', 'HEAD'], $route->getHttpMethods());
     }
 
     public function testConstructorThrowsExceptionForNoHttpMethods()

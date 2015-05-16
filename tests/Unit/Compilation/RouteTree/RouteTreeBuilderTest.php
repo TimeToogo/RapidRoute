@@ -67,7 +67,7 @@ class RouteTreeBuilderTest extends RapidRouteTest
                             (new StaticMatcher('place'))->getHash() => new RouteTreeNode(
                                 [1 => new StaticMatcher('place')],
                                 new MatchedRouteDataMap([
-                                    [['GET'], new MatchedRouteData([], ['main.place-get'])],
+                                    [['GET', 'HEAD'], new MatchedRouteData([], ['main.place-get'])],
                                     [['POST'], new MatchedRouteData([], ['main.place-post'])],
                                 ])
                             ),

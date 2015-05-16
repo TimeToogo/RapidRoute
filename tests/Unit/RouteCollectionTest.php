@@ -111,7 +111,6 @@ class RouteCollectionTest extends RapidRouteTest
     {
         return [
             ['get', 'GET'],
-            ['head', 'HEAD'],
             ['post', 'POST'],
             ['put', 'PUT'],
             ['patch', 'PATCH'],

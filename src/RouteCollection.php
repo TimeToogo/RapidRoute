@@ -51,19 +51,6 @@ class RouteCollection
     }
 
     /**
-     * Adds a route for a HEAD http request matching the supplied pattern to the collection.
-     *
-     * @param array|string $pattern
-     * @param array|object $data
-     *
-     * @return void
-     */
-    public function head($pattern, $data)
-    {
-        $this->add('HEAD', $pattern, $data);
-    }
-
-    /**
      * Adds a route for a POST http request matching the supplied pattern to the collection.
      *
      * @param array|string $pattern

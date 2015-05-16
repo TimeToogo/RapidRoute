@@ -21,8 +21,6 @@ class HttpMethodRouterTest extends RouterTestBase
 
         $routes->add(['POST', 'PATCH'], '/', ['name' => 'home.post-or-patch']);
 
-        $routes->head('/', ['name' => 'home.head']);
-
         $routes->delete('/', ['name' => 'home.delete']);
 
         $routes->any('/', ['name' => 'home.fallback']);
@@ -43,9 +41,9 @@ class HttpMethodRouterTest extends RouterTestBase
     {
         return [
             ['GET', '/', RouterResult::found(['name' => 'home.get'], [])],
+            ['HEAD', '/', RouterResult::found(['name' => 'home.get'], [])],
             ['POST', '/', RouterResult::found(['name' => 'home.post-or-patch'], [])],
             ['PATCH', '/', RouterResult::found(['name' => 'home.post-or-patch'], [])],
-            ['HEAD', '/', RouterResult::found(['name' => 'home.head'], [])],
             ['DELETE', '/', RouterResult::found(['name' => 'home.delete'], [])],
 
             ['BOGUS', '/', RouterResult::found(['name' => 'home.fallback'], [])],

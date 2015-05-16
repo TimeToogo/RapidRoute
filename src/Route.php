@@ -43,6 +43,13 @@ class Route
             : array_map('strtoupper', $httpMethods);
         $this->segments    = $segments;
         $this->data        = $data;
+
+        if($this->httpMethods !== self::ALLOW_ANY_METHOD) {
+            // HEAD request should behave identically to GET
+            if(in_array('GET', $this->httpMethods) && !in_array('HEAD', $this->httpMethods)) {
+                $this->httpMethods[] = 'HEAD';
+            }
+        }
     }
 
     /**
