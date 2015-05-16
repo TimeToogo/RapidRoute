@@ -3,11 +3,11 @@
 namespace RapidRoute;
 
 /**
- * The router result class.
+ * The match result class.
  *
  * @author Elliot Levin <elliotlevin@hotmail.com>
  */
-class RouterResult
+class MatchResult
 {
     const NOT_FOUND = 0;
     const HTTP_METHOD_NOT_ALLOWED = 1;
@@ -36,12 +36,12 @@ class RouterResult
     /**
      * Returns a NOT_FOUND router response
      *
-     * @return RouterResult
+     * @return MatchResult
      */
     public static function notFound()
     {
-        $result = new RouterResult();
-        $result->status = RouterResult::NOT_FOUND;
+        $result = new MatchResult();
+        $result->status = MatchResult::NOT_FOUND;
 
         return $result;
     }
@@ -51,12 +51,12 @@ class RouterResult
      *
      * @param string[] $allowedHttpMethods
      *
-     * @return RouterResult
+     * @return MatchResult
      */
     public static function httpMethodNotAllowed(array $allowedHttpMethods)
     {
-        $result = new RouterResult();
-        $result->status = RouterResult::HTTP_METHOD_NOT_ALLOWED;
+        $result = new MatchResult();
+        $result->status = MatchResult::HTTP_METHOD_NOT_ALLOWED;
         $result->allowedHttpMethods = $allowedHttpMethods;
 
         return $result;
@@ -68,13 +68,13 @@ class RouterResult
      * @param object|array $data
      * @param array        $parameters
      *
-     * @return RouterResult
+     * @return MatchResult
      * @throws InvalidRouteDataException
      */
     public static function found($data, array $parameters)
     {
-        $result = new RouterResult();
-        $result->status = RouterResult::FOUND;
+        $result = new MatchResult();
+        $result->status = MatchResult::FOUND;
         $result->routeData = $data;
         $result->parameters = $parameters;
 

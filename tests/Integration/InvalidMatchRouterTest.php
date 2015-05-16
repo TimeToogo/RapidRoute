@@ -5,7 +5,7 @@ namespace RapidRoute\Tests\Integration;
 use RapidRoute\Pattern;
 use RapidRoute\RapidRouteException;
 use RapidRoute\RouteCollection;
-use RapidRoute\RouterResult;
+use RapidRoute\MatchResult;
 
 /**
  * @author Elliot Levin <elliotlevin@hotmail.com>
@@ -36,7 +36,7 @@ class InvalidMatchRouterTest extends RouterTestBase
     public function routerMatchingExamples()
     {
         return [
-            ['GET', '/', RouterResult::found(['name' => 'home'], [])],
+            ['GET', '/', MatchResult::found(['name' => 'home'], [])],
         ];
     }
 

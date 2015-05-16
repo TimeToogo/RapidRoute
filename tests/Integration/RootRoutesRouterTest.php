@@ -3,7 +3,7 @@
 namespace RapidRoute\Tests\Integration;
 
 use RapidRoute\RouteCollection;
-use RapidRoute\RouterResult;
+use RapidRoute\MatchResult;
 
 /**
  * @author Elliot Levin <elliotlevin@hotmail.com>
@@ -36,9 +36,9 @@ class RootRoutesRouterTest extends RouterTestBase
     public function routerMatchingExamples()
     {
         return [
-            ['GET', '', RouterResult::found(['name' => 'root'], [])],
-            ['GET', '/', RouterResult::found(['name' => 'root-slash'], [])],
-            ['GET', '/a', RouterResult::notFound()],
+            ['GET', '', MatchResult::found(['name' => 'root'], [])],
+            ['GET', '/', MatchResult::found(['name' => 'root-slash'], [])],
+            ['GET', '/a', MatchResult::notFound()],
         ];
     }
 }

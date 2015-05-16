@@ -4,7 +4,7 @@ namespace RapidRoute\Tests\Integration;
 
 use RapidRoute\Pattern;
 use RapidRoute\RouteCollection;
-use RapidRoute\RouterResult;
+use RapidRoute\MatchResult;
 
 /**
  * @author Elliot Levin <elliotlevin@hotmail.com>
@@ -42,14 +42,14 @@ class CommonRouteSegmentRouterTest extends RouterTestBase
     public function routerMatchingExamples()
     {
         return [
-            ['GET', '/route1/a/b/c', RouterResult::found(['name' => 'route1'], ['p1' => 'a', 'p2' => 'b', 'p3' => 'c'])],
-            ['GET', '/route2/a/b/c', RouterResult::found(['name' => 'route2'], ['p1' => 'a', 'p2' => 'b', 'p3' => 'c'])],
-            ['GET', '/route3/a/b/c', RouterResult::found(['name' => 'route3'], ['p1' => 'a', 'p2' => 'b', 'p3' => 'c'])],
-            ['GET', '/route4/a/b/c', RouterResult::found(['name' => 'route4'], ['p1' => 'a', 'p2' => 'b', 'p3' => 'c'])],
-            ['GET', '/route5/a/b/c', RouterResult::found(['name' => 'route5'], ['p_1' => 'a', 'p_2' => 'b', 'p_3' => 'c'])],
-            ['GET', '/route6/a/1/c', RouterResult::notFound()],
-            ['GET', '/route6/a/b/c', RouterResult::found(['name' => 'route6'], ['p_1' => 'a', 'p2' => 'b', 'p_3' => 'c'])],
-            ['GET', '/route1/a/123/c', RouterResult::notFound()],
+            ['GET', '/route1/a/b/c', MatchResult::found(['name' => 'route1'], ['p1' => 'a', 'p2' => 'b', 'p3' => 'c'])],
+            ['GET', '/route2/a/b/c', MatchResult::found(['name' => 'route2'], ['p1' => 'a', 'p2' => 'b', 'p3' => 'c'])],
+            ['GET', '/route3/a/b/c', MatchResult::found(['name' => 'route3'], ['p1' => 'a', 'p2' => 'b', 'p3' => 'c'])],
+            ['GET', '/route4/a/b/c', MatchResult::found(['name' => 'route4'], ['p1' => 'a', 'p2' => 'b', 'p3' => 'c'])],
+            ['GET', '/route5/a/b/c', MatchResult::found(['name' => 'route5'], ['p_1' => 'a', 'p_2' => 'b', 'p_3' => 'c'])],
+            ['GET', '/route6/a/1/c', MatchResult::notFound()],
+            ['GET', '/route6/a/b/c', MatchResult::found(['name' => 'route6'], ['p_1' => 'a', 'p2' => 'b', 'p_3' => 'c'])],
+            ['GET', '/route1/a/123/c', MatchResult::notFound()],
         ];
     }
 }

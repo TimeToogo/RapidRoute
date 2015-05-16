@@ -4,7 +4,7 @@ namespace RapidRoute\Tests\Integration;
 
 use RapidRoute\RouteCollection;
 use RapidRoute\Router;
-use RapidRoute\RouterResult;
+use RapidRoute\MatchResult;
 use RapidRoute\Tests\RapidRouteTest;
 
 /**
@@ -62,7 +62,7 @@ abstract class RouterTestBase extends RapidRouteTest
     /**
      * @dataProvider routerMatchingExamples
      */
-    public function testRouter($httpMethod, $uri, RouterResult $expectedResult)
+    public function testRouter($httpMethod, $uri, MatchResult $expectedResult)
     {
         $actualResult = $this->router->match($httpMethod, $uri);
 

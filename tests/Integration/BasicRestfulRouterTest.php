@@ -4,7 +4,7 @@ namespace RapidRoute\Tests\Integration;
 
 use RapidRoute\Pattern;
 use RapidRoute\RouteCollection;
-use RapidRoute\RouterResult;
+use RapidRoute\MatchResult;
 
 /**
  * @author Elliot Levin <elliotlevin@hotmail.com>
@@ -49,42 +49,42 @@ class BasicRestfulRouterTest extends RouterTestBase
     public function routerMatchingExamples()
     {
         return [
-            ['GET', '', RouterResult::notFound()],
-            ['GET', '/', RouterResult::notFound()],
-            ['GET', '/users', RouterResult::notFound()],
-            ['GET', '/users/1', RouterResult::notFound()],
-            ['GET', '/user/', RouterResult::notFound()],
+            ['GET', '', MatchResult::notFound()],
+            ['GET', '/', MatchResult::notFound()],
+            ['GET', '/users', MatchResult::notFound()],
+            ['GET', '/users/1', MatchResult::notFound()],
+            ['GET', '/user/', MatchResult::notFound()],
 
-            ['GET', '/user', RouterResult::found(['name' => 'user.index'], [])],
-            ['PUT', '/user', RouterResult::httpMethodNotAllowed(['GET', 'HEAD','POST'])],
+            ['GET', '/user', MatchResult::found(['name' => 'user.index'], [])],
+            ['PUT', '/user', MatchResult::httpMethodNotAllowed(['GET', 'HEAD','POST'])],
 
-            ['GET', '/user/create', RouterResult::found(['name' => 'user.create'], [])],
-            ['DELETE', '/user', RouterResult::httpMethodNotAllowed(['GET', 'HEAD', 'POST'])],
-            ['PATCH', '/user', RouterResult::httpMethodNotAllowed(['GET', 'HEAD', 'POST'])],
+            ['GET', '/user/create', MatchResult::found(['name' => 'user.create'], [])],
+            ['DELETE', '/user', MatchResult::httpMethodNotAllowed(['GET', 'HEAD', 'POST'])],
+            ['PATCH', '/user', MatchResult::httpMethodNotAllowed(['GET', 'HEAD', 'POST'])],
 
-            ['POST', '/user', RouterResult::found(['name' => 'user.save'], [])],
-            ['DELETE', '/user', RouterResult::httpMethodNotAllowed(['GET', 'HEAD', 'POST'])],
+            ['POST', '/user', MatchResult::found(['name' => 'user.save'], [])],
+            ['DELETE', '/user', MatchResult::httpMethodNotAllowed(['GET', 'HEAD', 'POST'])],
 
-            ['GET', '/user/1', RouterResult::found(['name' => 'user.show'], ['id' => '1'])],
-            ['GET', '/user/123', RouterResult::found(['name' => 'user.show'], ['id' => '123'])],
-            ['HEAD', '/user/123', RouterResult::found(['name' => 'user.show'], ['id' => '123'])],
-            ['POST', '/user/123', RouterResult::httpMethodNotAllowed(['GET', 'HEAD', 'PUT', 'DELETE'])],
-            ['GET', '/user/abc', RouterResult::notFound()],
-            ['GET', '/user/-1', RouterResult::notFound()],
-            ['GET', '/user/1.0', RouterResult::notFound()],
-            ['GET', '/user/1/', RouterResult::notFound()],
+            ['GET', '/user/1', MatchResult::found(['name' => 'user.show'], ['id' => '1'])],
+            ['GET', '/user/123', MatchResult::found(['name' => 'user.show'], ['id' => '123'])],
+            ['HEAD', '/user/123', MatchResult::found(['name' => 'user.show'], ['id' => '123'])],
+            ['POST', '/user/123', MatchResult::httpMethodNotAllowed(['GET', 'HEAD', 'PUT', 'DELETE'])],
+            ['GET', '/user/abc', MatchResult::notFound()],
+            ['GET', '/user/-1', MatchResult::notFound()],
+            ['GET', '/user/1.0', MatchResult::notFound()],
+            ['GET', '/user/1/', MatchResult::notFound()],
 
-            ['GET', '/user/0/edit', RouterResult::found(['name' => 'user.edit'], ['id' => '0'])],
-            ['GET', '/user/123/edit', RouterResult::found(['name' => 'user.edit'], ['id' => '123'])],
-            ['PATCH', '/user/1/edit', RouterResult::httpMethodNotAllowed(['GET', 'HEAD'])],
-            ['GET', '/user//edit', RouterResult::notFound()],
-            ['GET', '/user/1/edit/', RouterResult::notFound()],
-            ['GET', '/user/abc/edit', RouterResult::notFound()],
-            ['GET', '/user/-1/edit', RouterResult::notFound()],
+            ['GET', '/user/0/edit', MatchResult::found(['name' => 'user.edit'], ['id' => '0'])],
+            ['GET', '/user/123/edit', MatchResult::found(['name' => 'user.edit'], ['id' => '123'])],
+            ['PATCH', '/user/1/edit', MatchResult::httpMethodNotAllowed(['GET', 'HEAD'])],
+            ['GET', '/user//edit', MatchResult::notFound()],
+            ['GET', '/user/1/edit/', MatchResult::notFound()],
+            ['GET', '/user/abc/edit', MatchResult::notFound()],
+            ['GET', '/user/-1/edit', MatchResult::notFound()],
 
-            ['PUT', '/user/1', RouterResult::found(['name' => 'user.update'], ['id' => '1'])],
-            ['PATCH', '/user/1', RouterResult::httpMethodNotAllowed(['GET', 'HEAD', 'PUT', 'DELETE'])],
-            ['PATCH', '/user/123321', RouterResult::httpMethodNotAllowed(['GET', 'HEAD', 'PUT', 'DELETE'])],
+            ['PUT', '/user/1', MatchResult::found(['name' => 'user.update'], ['id' => '1'])],
+            ['PATCH', '/user/1', MatchResult::httpMethodNotAllowed(['GET', 'HEAD', 'PUT', 'DELETE'])],
+            ['PATCH', '/user/123321', MatchResult::httpMethodNotAllowed(['GET', 'HEAD', 'PUT', 'DELETE'])],
         ];
     }
 }

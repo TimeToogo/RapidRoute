@@ -2,20 +2,19 @@
 
 namespace RapidRoute\Tests\Unit;
 
-use RapidRoute\InvalidRouteDataException;
-use RapidRoute\RouterResult;
+use RapidRoute\MatchResult;
 use RapidRoute\Tests\RapidRouteTest;
 
 /**
  * @author Elliot Levin <elliotlevin@hotmail.com>
  */
-class RouterResultTest extends RapidRouteTest
+class MatchResultTest extends RapidRouteTest
 {
     public function testFound()
     {
-        $result = RouterResult::found(['some_data'], ['param' => 'value']);
+        $result = MatchResult::found(['some_data'], ['param' => 'value']);
 
-        $this->assertSame($result->status(), RouterResult::FOUND);
+        $this->assertSame($result->status(), MatchResult::FOUND);
 
         $this->assertTrue($result->isFound());
         $this->assertFalse($result->isNotFound());
@@ -28,9 +27,9 @@ class RouterResultTest extends RapidRouteTest
 
     public function testNotFound()
     {
-        $result = RouterResult::notFound();
+        $result = MatchResult::notFound();
 
-        $this->assertSame($result->status(), RouterResult::NOT_FOUND);
+        $this->assertSame($result->status(), MatchResult::NOT_FOUND);
 
         $this->assertTrue($result->isNotFound());
         $this->assertFalse($result->isFound());
@@ -43,9 +42,9 @@ class RouterResultTest extends RapidRouteTest
 
     public function testHttpMethodNotAllowed()
     {
-        $result = RouterResult::httpMethodNotAllowed(['PUT', 'DELETE']);
+        $result = MatchResult::httpMethodNotAllowed(['PUT', 'DELETE']);
 
-        $this->assertSame($result->status(), RouterResult::HTTP_METHOD_NOT_ALLOWED);
+        $this->assertSame($result->status(), MatchResult::HTTP_METHOD_NOT_ALLOWED);
 
         $this->assertTrue($result->isDisallowedHttpMethod());
         $this->assertFalse($result->isFound());

@@ -22,7 +22,7 @@ class RouterCompiler
 <?php
 
 use RapidRoute\RapidRouteException;
-use RapidRoute\RouterResult as Result;
+use RapidRoute\MatchResult as Result;
 
 return function ($method, $uri) {
     if($uri === '') {

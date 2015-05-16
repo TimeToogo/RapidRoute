@@ -68,7 +68,7 @@ class Router
      * @param string $httpMethod
      * @param string $uri
      *
-     * @return RouterResult
+     * @return MatchResult
      * @throws InvalidRouteDataException
      */
     public function match($httpMethod, $uri)

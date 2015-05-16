@@ -3,7 +3,7 @@
 namespace RapidRoute\Tests\Integration;
 
 use RapidRoute\RouteCollection;
-use RapidRoute\RouterResult;
+use RapidRoute\MatchResult;
 
 /**
  * @author Elliot Levin <elliotlevin@hotmail.com>
@@ -40,20 +40,20 @@ class HttpMethodRouterTest extends RouterTestBase
     public function routerMatchingExamples()
     {
         return [
-            ['GET', '/', RouterResult::found(['name' => 'home.get'], [])],
-            ['HEAD', '/', RouterResult::found(['name' => 'home.get'], [])],
-            ['POST', '/', RouterResult::found(['name' => 'home.post-or-patch'], [])],
-            ['PATCH', '/', RouterResult::found(['name' => 'home.post-or-patch'], [])],
-            ['DELETE', '/', RouterResult::found(['name' => 'home.delete'], [])],
+            ['GET', '/', MatchResult::found(['name' => 'home.get'], [])],
+            ['HEAD', '/', MatchResult::found(['name' => 'home.get'], [])],
+            ['POST', '/', MatchResult::found(['name' => 'home.post-or-patch'], [])],
+            ['PATCH', '/', MatchResult::found(['name' => 'home.post-or-patch'], [])],
+            ['DELETE', '/', MatchResult::found(['name' => 'home.delete'], [])],
 
-            ['BOGUS', '/', RouterResult::found(['name' => 'home.fallback'], [])],
-            ['', '/', RouterResult::found(['name' => 'home.fallback'], [])],
-            ['get', '/', RouterResult::found(['name' => 'home.fallback'], [])],
-            ['Get', '/', RouterResult::found(['name' => 'home.fallback'], [])],
-            ['Patch', '/', RouterResult::found(['name' => 'home.fallback'], [])],
-            ['!@@!', '/', RouterResult::found(['name' => 'home.fallback'], [])],
+            ['BOGUS', '/', MatchResult::found(['name' => 'home.fallback'], [])],
+            ['', '/', MatchResult::found(['name' => 'home.fallback'], [])],
+            ['get', '/', MatchResult::found(['name' => 'home.fallback'], [])],
+            ['Get', '/', MatchResult::found(['name' => 'home.fallback'], [])],
+            ['Patch', '/', MatchResult::found(['name' => 'home.fallback'], [])],
+            ['!@@!', '/', MatchResult::found(['name' => 'home.fallback'], [])],
 
-            ['GET', '', RouterResult::notFound()],
+            ['GET', '', MatchResult::notFound()],
         ];
     }
 }
