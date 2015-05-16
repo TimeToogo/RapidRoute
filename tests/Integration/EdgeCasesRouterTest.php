@@ -20,6 +20,8 @@ class EdgeCasesRouterTest extends RouterTestBase
     {
         $routes->get('/abc/{param}/bar', ['name' => 'middle-param']);
         $routes->get(['/123/{param}/bar', 'param' => '.*'], ['name' => 'all-middle-param']);
+
+        $routes->get(['/object'], (object)['name' => 'object-data']);
     }
 
     /**
@@ -41,6 +43,8 @@ class EdgeCasesRouterTest extends RouterTestBase
 
             ['GET', '/123//bar', MatchResult::found(['name' => 'all-middle-param'], ['param' => ''])],
             ['GET', '/123/a/bar', MatchResult::found(['name' => 'all-middle-param'], ['param' => 'a'])],
+
+            ['GET', '/object', MatchResult::found((object)['name' => 'object-data'], [])],
         ];
     }
 
