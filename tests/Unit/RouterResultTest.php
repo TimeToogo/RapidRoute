@@ -55,10 +55,4 @@ class RouterResultTest extends RapidRouteTest
         $this->assertNull($result->getParameters());
         $this->assertNull($result->getRouteData());
     }
-
-    public function testFoundWithInvalidRouteDataThrowsException()
-    {
-        $this->setExpectedException(InvalidRouteDataException::getType());
-        RouterResult::found(false, ['param' => 'value']);
-    }
 }

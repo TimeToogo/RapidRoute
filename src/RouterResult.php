@@ -33,14 +33,6 @@ class RouterResult
      */
     protected $allowedHttpMethods;
 
-    protected function __construct($status, $routeData, array $parameters = null, array $allowedHttpMethods = null)
-    {
-        $this->status             = $status;
-        $this->routeData          = $routeData;
-        $this->parameters         = $parameters;
-        $this->allowedHttpMethods = $allowedHttpMethods;
-    }
-
     /**
      * Returns a NOT_FOUND router response
      *
@@ -48,7 +40,10 @@ class RouterResult
      */
     public static function notFound()
     {
-        return new self(self::NOT_FOUND, null);
+        $result = new RouterResult();
+        $result->status = RouterResult::NOT_FOUND;
+
+        return $result;
     }
 
     /**
@@ -60,7 +55,11 @@ class RouterResult
      */
     public static function httpMethodNotAllowed(array $allowedHttpMethods)
     {
-        return new self(self::HTTP_METHOD_NOT_ALLOWED, null, null, $allowedHttpMethods);
+        $result = new RouterResult();
+        $result->status = RouterResult::HTTP_METHOD_NOT_ALLOWED;
+        $result->allowedHttpMethods = $allowedHttpMethods;
+
+        return $result;
     }
 
     /**
@@ -74,11 +73,12 @@ class RouterResult
      */
     public static function found($data, array $parameters)
     {
-        if (!is_array($data) && !is_object($data)) {
-            throw new InvalidRouteDataException($data);
-        }
+        $result = new RouterResult();
+        $result->status = RouterResult::FOUND;
+        $result->routeData = $data;
+        $result->parameters = $parameters;
 
-        return new self(self::FOUND, $data, $parameters);
+        return $result;
     }
 
     /**

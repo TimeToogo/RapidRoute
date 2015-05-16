@@ -31,19 +31,17 @@ class Router
      */
     protected $compiledRouter;
 
-    /**
-     * @var RouteParser
-     */
-    protected $routeParser;
-
     public function __construct(
         $compiledRouterPath,
-        callable $routeDefinitionsCallback,
-        RouteParser $routeParser = null
+        callable $routeDefinitionsCallback
     ) {
         $this->compiledRouterPath       = $compiledRouterPath;
         $this->routeDefinitionsCallback = $routeDefinitionsCallback;
-        $this->routeParser              = $routeParser ?: new RouteParser();
+    }
+
+    protected function buildRouteCollection()
+    {
+        return new RouteCollection(new RouteParser());
     }
 
     /**
@@ -75,8 +73,11 @@ class Router
      */
     public function match($httpMethod, $uri)
     {
-        if ($this->compiledRouter === null) {
-            $this->compiledRouter = $this->loadCompiledRouter();
+        if ($this->compiledRouter === null && !$this->developmentMode && file_exists($this->compiledRouterPath)) {
+            $this->compiledRouter = require $this->compiledRouterPath;
+        } else {
+            $this->saveCompiledRouter();
+            $this->compiledRouter = require $this->compiledRouterPath;
         }
 
         $compiledRouter = $this->compiledRouter;
@@ -97,18 +98,6 @@ class Router
     }
 
     /**
-     * @return callable
-     */
-    protected function loadCompiledRouter()
-    {
-        if ($this->developmentMode || !file_exists($this->compiledRouterPath)) {
-            $this->saveCompiledRouter();
-        }
-
-        return require $this->compiledRouterPath;
-    }
-
-    /**
      * @return void
      */
     protected function saveCompiledRouter()
@@ -122,7 +111,7 @@ class Router
     protected function compileRouterFile()
     {
         $definitionsCallback = $this->routeDefinitionsCallback;
-        $routes              = new RouteCollection($this->routeParser);
+        $routes              = $this->buildRouteCollection();
         $definitionsCallback($routes);
 
         $compiler = new RouterCompiler();

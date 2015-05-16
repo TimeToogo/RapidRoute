@@ -17,7 +17,7 @@ class AnyMatcher extends SingleParameterSegmentMatcher
      */
     public function getConditionExpression($segmentVariable, $uniqueKey)
     {
-        return '!empty(' . $segmentVariable . ')';
+        return $segmentVariable . ' !== \'\'';
     }
 
     /**

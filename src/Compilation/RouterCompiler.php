@@ -25,14 +25,13 @@ use RapidRoute\RapidRouteException;
 use RapidRoute\RouterResult as Result;
 
 return function ($method, $uri) {
-    $segments = explode('/', $uri);
-
-    if($segments[0] !== '') {
+    if($uri === '') {
+{root_route}
+    } elseif ($uri[0] !== '/') {
         throw new RapidRouteException("Cannot match route: non-empty uri must be prefixed with '/', '{$uri}' given");
     }
 
-    array_shift($segments);
-    $parameters = [];
+    $segments = explode('/', substr($uri, 1));
 
 {body}
 };
@@ -73,17 +72,20 @@ PHP;
         $code->indent = 1;
         $this->compileRouteTree($code, $routeTree);
 
-        return $this->formatPhpRouterTemplate($code->getCode());
+        $rootRouteCode = new PhpBuilder();
+        $rootRouteCode->indent = 2;
+        if ($routeTree->hasRootRoute()) {
+            $this->compiledRouteHttpMethodMatch($rootRouteCode, $routeTree->getRootRouteData(), array());
+        } else {
+            $this->compileNotFound($rootRouteCode);
+        }
+
+        return $this->formatPhpRouterTemplate(substr($rootRouteCode->getCode(), 0, -strlen(PHP_EOL)), $code->getCode());
     }
 
-    /**
-     * @param string $php
-     *
-     * @return string
-     */
-    protected function formatPhpRouterTemplate($php)
+    protected function formatPhpRouterTemplate($rootRoute, $body)
     {
-        return str_replace('{body}', $php, self::COMPILED_ROUTER_TEMPLATE);
+        return strtr(self::COMPILED_ROUTER_TEMPLATE, ['{root_route}' => $rootRoute, '{body}' => $body]);
     }
 
     protected function compileRouteTree(PhpBuilder $code, RouteTree $routeTree)
@@ -91,18 +93,19 @@ PHP;
         $code->appendLine('switch (count($segments)) {');
         $code->indent++;
 
-        if ($routeTree->hasRootRoute()) {
-            $code->appendLine('case 0:');
-            $code->indent++;
-            $this->compiledRouteHttpMethodMatch($code, $routeTree->getRootRouteData());
-            $code->appendLine('break;');
-            $code->indent--;
-        }
-
         foreach ($routeTree->getSegmentDepthNodesMap() as $segmentDepth => $nodes) {
             $code->appendLine('case ' . $this->export($segmentDepth) . ':');
             $code->indent++;
-            $this->compileSegmentNodes($code, $nodes);
+
+            $segmentVariables = [];
+            for($i = 0; $i < $segmentDepth; $i++) {
+                // Use
+                $segmentVariables[$i] = '$s' . $i;
+            }
+
+            $code->appendLine('list(' . implode(', ', $segmentVariables) . ') = $segments;');
+            $this->compileSegmentNodes($code, $nodes, $segmentVariables);
+
             $code->appendLine('break;');
             $code->indent--;
             $code->appendLine();
@@ -117,23 +120,19 @@ PHP;
         $code->append('}');
     }
 
-    protected function compileSegmentNodes(PhpBuilder $code, ChildrenNodeCollection $nodes, $notFound = true)
+    protected function compileSegmentNodes(PhpBuilder $code, ChildrenNodeCollection $nodes, array $segmentVariables, $notFound = true, array $parameters = array())
     {
         $exclusiveCases = $nodes->areChildrenExclusive();
         $first = true;
 
         foreach ($nodes->getChildren() as $node) {
             /** @var SegmentMatcher[] $segmentMatchers */
-            $segmentVariables = [];
             $segmentMatchers  = $node->getMatchers();
 
             $conditions       = [];
 
-            foreach ($segmentMatchers as $segmentDepth => $matcher) {
-                $segmentVariables[$segmentDepth] = '$segments[' . $segmentDepth . ']';
-            }
-
-            $count = 0;
+            $currentParameter = empty($parameters) ? 0 : max(array_keys($parameters)) + 1;
+            $count = $currentParameter;
             foreach ($segmentMatchers as $segmentDepth => $matcher) {
                 $conditions[] = $matcher->getConditionExpression($segmentVariables[$segmentDepth], $count++);
             }
@@ -142,19 +141,19 @@ PHP;
             $code->appendLine($conditional . ' (' . implode(' && ', $conditions) . ') {');
             $code->indent++;
 
-            $count = 0;
+            $count = $currentParameter;
             foreach ($segmentMatchers as $segmentDepth => $matcher) {
                 $matchedParameters = $matcher->getMatchedParameterExpressions($segmentVariables[$segmentDepth], $count++);
 
                 foreach($matchedParameters as $parameterKey => $matchedParameter) {
-                    $code->appendLine('$parameters[' . $parameterKey . '] = ' . $matchedParameter . ';');
+                    $parameters[$parameterKey] = $matchedParameter;
                 }
             }
 
             if ($node->isLeafNode()) {
-                $this->compiledRouteHttpMethodMatch($code, $node->getContents());
+                $this->compiledRouteHttpMethodMatch($code, $node->getContents(), $parameters);
             } else {
-                $this->compileSegmentNodes($code, $node->getContents(), $exclusiveCases);
+                $this->compileSegmentNodes($code, $node->getContents(), $segmentVariables, $exclusiveCases, $parameters);
             }
 
             $code->indent--;
@@ -177,7 +176,7 @@ PHP;
         }
     }
 
-    protected function compiledRouteHttpMethodMatch(PhpBuilder $code, MatchedRouteDataMap $routeDataMap)
+    protected function compiledRouteHttpMethodMatch(PhpBuilder $code, MatchedRouteDataMap $routeDataMap, array $parameters)
     {
         $code->appendLine('switch ($method) {');
         $code->indent++;
@@ -190,7 +189,7 @@ PHP;
             }
 
             $code->indent++;
-            $this->compileFound($code, $routeData);
+            $this->compileFound($code, $routeData, $parameters);
             $code->indent--;
         }
 
@@ -198,7 +197,7 @@ PHP;
         $code->indent++;
 
         if ($routeDataMap->hasDefaultRouteData()) {
-            $this->compileFound($code, $routeDataMap->getDefaultRouteData());
+            $this->compileFound($code, $routeDataMap->getDefaultRouteData(), $parameters);
         } else {
             $this->compileDisallowedHttpMethod($code, $routeDataMap->getAllowedHttpMethods());
         }
@@ -219,12 +218,12 @@ PHP;
         $code->appendLine('return Result::httpMethodNotAllowed(' . $this->export($allowedMethod) . ');');
     }
 
-    protected function compileFound(PhpBuilder $code, MatchedRouteData $foundRoute)
+    protected function compileFound(PhpBuilder $code, MatchedRouteData $foundRoute, array $parameterExpressions)
     {
         $parameters = '[';
 
         foreach ($foundRoute->getParameterIndexNameMap() as $index => $parameterName) {
-            $parameters .= $this->export($parameterName) . ' => $parameters[' . $index . '], ';
+            $parameters .= $this->export($parameterName) . ' => ' . $parameterExpressions[$index] . ', ';
         }
 
         if (strlen($parameters) > 2) {
