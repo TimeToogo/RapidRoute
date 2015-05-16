@@ -16,17 +16,17 @@ class RouteTreeBuilder
     /**
      * Creates a route tree from the supplied routes.
      *
-     * @param RouteCollection $routes
+     * @param Route[] $routes
      *
      * @return RouteTree
      */
-    public function build(RouteCollection $routes)
+    public function build(array $routes)
     {
         $rootRouteData = null;
         $nodes         = [];
         $groupedRoutes = [];
 
-        foreach ($routes->asArray() as $route) {
+        foreach ($routes as $route) {
             $groupedRoutes[count($route->getSegments())][] = $route;
         }
 

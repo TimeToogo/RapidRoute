@@ -3,6 +3,7 @@
 namespace RapidRoute\Tests\Unit\Compilation;
 
 use RapidRoute\Compilation\VarExporter;
+use RapidRoute\Tests\Helpers\CustomClass;
 use RapidRoute\Tests\RapidRouteTest;
 
 /**
@@ -24,11 +25,27 @@ class VarExporterTest extends RapidRouteTest
            ['abcdef', '\'abcdef\''],
            ['', '\'\''],
            [[], '[]'],
-           [[1, 2, 3], '[0 => 1, 1 => 2, 2 => 3]'],
-           [[1, '2', 3], '[0 => 1, 1 => \'2\', 2 => 3]'],
-           [['foo' => 1, [2, 3]], '[\'foo\' => 1, 0 => [0 => 2, 1 => 3]]'],
-           [new \stdClass(), 'unserialize(\'O:8:"stdClass":0:{}\')'],
-           [(object)['foo' => 'bar'], 'unserialize(\'O:8:"stdClass":1:{s:3:"foo";s:3:"bar";}\')'],
+           [[1], '[0 => 1]'],
+           [[1, 2, 3], '[
+    0 => 1,
+    1 => 2,
+    2 => 3,
+]'],
+           [[1, '2', 3], '[
+    0 => 1,
+    1 => \'2\',
+    2 => 3,
+]'],
+           [['foo' => 1, [2, 3]], '[
+    \'foo\' => 1,
+    0 => [
+        0 => 2,
+        1 => 3,
+    ],
+]'],
+           [new \stdClass(), '(object)[]'],
+           [(object)['foo' => 'bar'], '(object)[\'foo\' => \'bar\']'],
+           [new CustomClass(), 'unserialize(\'O:36:"RapidRoute\\\\Tests\\\\Helpers\\\\CustomClass":0:{}\')'],
        ];
     }
 

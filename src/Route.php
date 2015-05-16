@@ -2,6 +2,7 @@
 
 namespace RapidRoute;
 
+use RapidRoute\RouteSegments\ParameterSegment;
 use RapidRoute\RouteSegments\RouteSegment;
 
 /**
@@ -90,5 +91,19 @@ class Route
     public function getData()
     {
         return $this->data;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isStatic()
+    {
+        foreach($this->segments as $segment) {
+            if($segment instanceof ParameterSegment) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

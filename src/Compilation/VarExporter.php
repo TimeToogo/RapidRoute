@@ -19,54 +19,40 @@ class VarExporter
      */
     public static function export($value)
     {
-        if (self::shouldBeSerialized($value)) {
-            return 'unserialize(' . var_export(serialize($value), true) . ')';
-        }
-
         if (is_array($value)) {
-            $code = '[';
-
-            foreach ($value as $key => $element) {
-                $code .= self::export($key);
-                $code .= ' => ';
-                $code .= self::export($element);
-                $code .= ', ';
+            if(empty($value)) {
+                return '[]';
+            } elseif(count($value) === 1) {
+                reset($value);
+                return '[' . self::export(key($value)) . ' => ' . self::export(current($value)) . ']';
             }
 
-            if (strlen($code) > 2) {
-                $code = substr($code, 0, -2);
+            $code = '[' . PHP_EOL;
+            $indent = '    ';
+
+            foreach ($value as $key => $element) {
+                $code .= $indent;
+                $code .= self::export($key);
+                $code .= ' => ';
+                $code .= str_replace(PHP_EOL, PHP_EOL . $indent, self::export($element));
+                $code .= ',' . PHP_EOL;
             }
 
             $code .= ']';
 
             return $code;
+        } elseif (is_object($value) && get_class($value) === 'stdClass') {
+            return '(object)' . self::export((array)$value);
         }
 
         if($value === null) {
             return 'null';
         }
 
-        return var_export($value, true);
-    }
-
-    protected static function shouldBeSerialized($value)
-    {
-        if (is_scalar($value) || $value === null) {
-            return false;
+        if (is_scalar($value)) {
+            return var_export($value, true);
         }
 
-        if (is_array($value)) {
-            $shouldBeSerialized = false;
-
-            array_walk_recursive($value, function ($value) use (&$shouldBeSerialized) {
-                if (!$shouldBeSerialized) {
-                    $shouldBeSerialized = self::shouldBeSerialized($value);
-                }
-            });
-
-            return $shouldBeSerialized;
-        }
-
-        return true;
+        return 'unserialize(' . var_export(serialize($value), true) . ')';
     }
 }

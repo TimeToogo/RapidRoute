@@ -5,7 +5,9 @@ namespace RapidRoute\Tests\Unit;
 use RapidRoute\InvalidRouteDataException;
 use RapidRoute\RapidRouteException;
 use RapidRoute\Route;
+use RapidRoute\RouteSegments\ParameterSegment;
 use RapidRoute\RouteSegments\RouteSegment;
+use RapidRoute\RouteSegments\StaticSegment;
 use RapidRoute\Tests\RapidRouteTest;
 
 /**
@@ -66,5 +68,23 @@ class RouteTest extends RapidRouteTest
         $this->assertSame(['GET', 'HEAD'], $route->getHttpMethods());
         $this->assertSame([$requestSegment], $route->getSegments());
         $this->assertSame(['data'], $route->getData());
+    }
+
+    public function testIsStatic()
+    {
+        $staticSegment = $this->getMock(StaticSegment::getType(), [], [], '', false);
+        $parameterSegment = $this->getMock(ParameterSegment::getType(), [], [], '', false);
+
+        $route = new Route(['GET'], [$staticSegment], ['data']);
+        $this->assertTrue($route->isStatic());
+
+        $route = new Route(['GET'], [$staticSegment, $staticSegment, $staticSegment], ['data']);
+        $this->assertTrue($route->isStatic());
+
+        $route = new Route(['GET'], [$parameterSegment], ['data']);
+        $this->assertFalse($route->isStatic());
+
+        $route = new Route(['GET'], [$staticSegment, $parameterSegment, $staticSegment], ['data']);
+        $this->assertFalse($route->isStatic());
     }
 }

@@ -125,15 +125,7 @@ class RouteTreeBuilderTest extends RapidRouteTest
     {
         $builder = new RouteTreeBuilder();
 
-        $routeCollection = $this->getMockBuilder(RouteCollection::getType())
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $routeCollection->expects($this->once())
-            ->method('asArray')
-            ->willReturn($routes);
-
-        $tree = $builder->build($routeCollection);
+        $tree = $builder->build($routes);
 
         $this->assertSame($rootRoute !== null, $tree->hasRootRoute());
         $this->assertEquals($rootRoute, $tree->getRootRouteData());

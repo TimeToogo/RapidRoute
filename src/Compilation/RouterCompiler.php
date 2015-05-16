@@ -9,7 +9,9 @@ use RapidRoute\Compilation\RouteTree\MatchedRouteDataMap;
 use RapidRoute\Compilation\RouteTree\RouteTree;
 use RapidRoute\Compilation\RouteTree\RouteTreeBuilder;
 use RapidRoute\Compilation\RouteTree\RouteTreeOptimizer;
+use RapidRoute\Route;
 use RapidRoute\RouteCollection;
+use RapidRoute\RouteSegments\StaticSegment;
 
 /**
  * The default router compiler class.
@@ -25,10 +27,25 @@ use RapidRoute\RapidRouteException;
 use RapidRoute\MatchResult as Result;
 
 return function ($method, $uri) {
-    if($uri === '') {
-{root_route}
-    } elseif ($uri[0] !== '/') {
+    if ($uri !== '' && $uri[0] !== '/') {
         throw new RapidRouteException("Cannot match route: non-empty uri must be prefixed with '/', '{$uri}' given");
+    }
+
+    static $staticRoutes;
+    if(!isset($staticRoutes)) {
+        $staticRoutes =
+{static_route_map};
+    }
+
+    $staticRouteMatch =& $staticRoutes[$uri];
+    if(isset($staticRouteMatch)) {
+        if(isset($staticRouteMatch[$method])) {
+            return Result::found($staticRouteMatch[$method], []);
+        } elseif (isset($staticRouteMatch['*'])) {
+            return Result::found($staticRouteMatch['*'], []);
+        } else {
+            return Result::httpMethodNotAllowed(array_keys($staticRouteMatch));
+        }
     }
 
     $segments = explode('/', substr($uri, 1));
@@ -65,27 +82,59 @@ PHP;
      */
     public function compileRoutesToPhpClosure(RouteCollection $routes)
     {
-        $routeTree = $this->treeBuilder->build($routes);
+        $staticRoutes = [];
+        $dynamicRoutes = [];
+
+        foreach($routes->asArray() as $route) {
+            if($route->isStatic()) {
+                $staticRoutes[] = $route;
+            } else {
+                $dynamicRoutes[] = $route;
+            }
+        }
+
+        $staticRouteCode = new PhpBuilder();
+        $staticRouteCode->indent = 2;
+        $this->compileStaticRouteMap($staticRouteCode, $staticRoutes);
+
+        $routeTree = $this->treeBuilder->build($dynamicRoutes);
         $routeTree = $this->treeOptimizer->optimize($routeTree);
 
         $code         = new PhpBuilder();
         $code->indent = 1;
         $this->compileRouteTree($code, $routeTree);
 
-        $rootRouteCode = new PhpBuilder();
-        $rootRouteCode->indent = 2;
-        if ($routeTree->hasRootRoute()) {
-            $this->compiledRouteHttpMethodMatch($rootRouteCode, $routeTree->getRootRouteData(), array());
-        } else {
-            $this->compileNotFound($rootRouteCode);
-        }
-
-        return $this->formatPhpRouterTemplate(substr($rootRouteCode->getCode(), 0, -strlen(PHP_EOL)), $code->getCode());
+        return $this->formatPhpRouterTemplate($staticRouteCode->getCode(), $code->getCode());
     }
 
-    protected function formatPhpRouterTemplate($rootRoute, $body)
+    protected function formatPhpRouterTemplate($staticRouteMap, $body)
     {
-        return strtr(self::COMPILED_ROUTER_TEMPLATE, ['{root_route}' => $rootRoute, '{body}' => $body]);
+        return strtr(self::COMPILED_ROUTER_TEMPLATE, ['{static_route_map}' => $staticRouteMap, '{body}' => $body]);
+    }
+
+    protected function compileStaticRouteMap(PhpBuilder $code, array $staticRoutes)
+    {
+        $routeMap = [];
+
+        /** @var Route[] $staticRoutes */
+        foreach($staticRoutes as $staticRoute) {
+            $route = '';
+
+            /** @var StaticSegment $segment */
+            foreach($staticRoute->getSegments() as $segment) {
+                $route .= '/' . $segment->getValue();
+            }
+
+            if($staticRoute->allowsAnyHttpMethod()) {
+                $routeMap[$route]['*'] = $staticRoute->getData();
+            } else {
+                foreach($staticRoute->getHttpMethods() as $method) {
+                    $routeMap[$route][$method] = $staticRoute->getData();
+                }
+            }
+        }
+
+        $code->append($this->export($routeMap));
     }
 
     protected function compileRouteTree(PhpBuilder $code, RouteTree $routeTree)
