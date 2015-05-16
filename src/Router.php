@@ -88,14 +88,16 @@ class Router
     }
 
     /**
-     * Clears the compiled router, it will be recompiled when next
-     * requested.
+     * Clears the compiled router, it will be recompiled when next requested.
      *
      * @return void
      */
     public function clearCompiled()
     {
-        @unlink($this->compiledRouterPath);
+        if(file_exists($this->compiledRouterPath)) {
+            @unlink($this->compiledRouterPath);
+        }
+
         $this->compiledRouter = null;
     }
 
