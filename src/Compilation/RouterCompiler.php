@@ -84,12 +84,21 @@ PHP;
     {
         $staticRoutes = [];
         $dynamicRoutes = [];
+        $dynamicRoutesGroups = [];
+        $anyMethodDynamicRoutes = [];
 
         foreach($routes->asArray() as $route) {
             if($route->isStatic()) {
                 $staticRoutes[] = $route;
             } else {
-                $dynamicRoutes[] = $route;
+                if($route->allowsAnyHttpMethod()) {
+                    $anyMethodDynamicRoutes[] = $route;
+                } else {
+                    foreach($route->getHttpMethods() as $method) {
+                        $dynamicRoutesGroups[$method][] = $route;
+                    }
+                    $dynamicRoutes[] = $route;
+                }
             }
         }
 
@@ -97,19 +106,54 @@ PHP;
         $staticRouteCode->indent = 2;
         $this->compileStaticRouteMap($staticRouteCode, $staticRoutes);
 
-        $routeTree = $this->treeBuilder->build($dynamicRoutes);
-        $routeTree = $this->treeOptimizer->optimize($routeTree);
-
         $code         = new PhpBuilder();
         $code->indent = 1;
+
+        $code->appendLine('switch ($method) {');
+        $code->indent++;
+
+        $this->gotoFallback = 'anyMethodFallback';
+        $this->invalidMethod = false;
+
+        foreach($dynamicRoutesGroups as $method => $methodRoutes) {
+            $code->appendLine('case ' . $this->export($method) . ':');
+            $code->indent++;
+
+            $this->currentHttpMethod = $method;
+            $routeTree = $this->treeBuilder->build($methodRoutes);
+            $routeTree = $this->treeOptimizer->optimize($routeTree);
+            $this->compileRouteTree($code, $routeTree);
+
+            $code->appendLine('break;');
+            $code->indent--;
+        }
+
+        $code->indent--;
+        $code->appendLine('}');
+
+        $this->gotoFallback = 'invalidMethodFallback';
+
+        $code->appendLine('anyMethodFallback:');
+
+        $routeTree = $this->treeBuilder->build($anyMethodDynamicRoutes);
+        $routeTree = $this->treeOptimizer->optimize($routeTree);
         $this->compileRouteTree($code, $routeTree);
 
-        return $this->formatPhpRouterTemplate($staticRouteCode->getCode(), $code->getCode());
+        $this->gotoFallback = null;
+        $this->invalidMethod = true;
+
+
+        $code->appendLine('invalidMethodFallback:');
+        $routeTree = $this->treeBuilder->build($dynamicRoutes);
+        $routeTree = $this->treeOptimizer->optimize($routeTree);
+        $this->compileRouteTree($code, $routeTree);
+
+        return $this->formatPhpRouterTemplate(['{static_route_map}' => $staticRouteCode->getCode(), '{body}' => $code->getCode()]);
     }
 
-    protected function formatPhpRouterTemplate($staticRouteMap, $body)
+    protected function formatPhpRouterTemplate(array $replacements)
     {
-        return strtr(self::COMPILED_ROUTER_TEMPLATE, ['{static_route_map}' => $staticRouteMap, '{body}' => $body]);
+        return strtr(self::COMPILED_ROUTER_TEMPLATE, $replacements);
     }
 
     protected function compileStaticRouteMap(PhpBuilder $code, array $staticRoutes)
@@ -227,39 +271,28 @@ PHP;
 
     protected function compiledRouteHttpMethodMatch(PhpBuilder $code, MatchedRouteDataMap $routeDataMap, array $parameters)
     {
-        $code->appendLine('switch ($method) {');
-        $code->indent++;
-
-        foreach ($routeDataMap->getHttpMethodRouteDataMap() as $item) {
-            /** @var MatchedRouteData $routeData */
-            list($httpMethods, $routeData) = $item;
-            foreach ($httpMethods as $httpMethod) {
-                $code->appendLine('case ' . $this->export($httpMethod) . ':');
-            }
-
-            $code->indent++;
-            $this->compileFound($code, $routeData, $parameters);
-            $code->indent--;
-        }
-
-        $code->appendLine('default:');
-        $code->indent++;
-
-        if ($routeDataMap->hasDefaultRouteData()) {
-            $this->compileFound($code, $routeDataMap->getDefaultRouteData(), $parameters);
-        } else {
+        if($this->invalidMethod) {
             $this->compileDisallowedHttpMethod($code, $routeDataMap->getAllowedHttpMethods());
+        } else {
+
+            foreach ($routeDataMap->getHttpMethodRouteDataMap() as $item) {
+                /** @var MatchedRouteData $routeData */
+                list($httpMethods, $routeData) = $item;
+                if(in_array($this->currentHttpMethod, $httpMethods)) {
+                    $this->compileFound($code, $routeData, $parameters);
+                    return;
+                }
+            }
         }
-
-        $code->indent--;
-
-        $code->indent--;
-        $code->appendLine('}');
     }
 
     protected function compileNotFound(PhpBuilder $code)
     {
-        $code->appendLine('return Result::notFound();');
+        if($this->gotoFallback) {
+            $code->appendLine('goto ' . $this->gotoFallback . ';');
+        } else {
+            $code->appendLine('return Result::notFound();');
+        }
     }
 
     protected function compileDisallowedHttpMethod(PhpBuilder $code, array $allowedMethod)
