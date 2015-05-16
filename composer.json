@@ -1,7 +1,7 @@
 {
     "name": "timetoogo/rapid-route",
-    "description": "A fast router library for PHP",
-    "keywords": ["route", "fast"],
+    "description": "Another fast router library for PHP",
+    "keywords": ["route", "router", "fast"],
     "homepage": "http://www.github.com/TimeToogo/RapidRoute",
     "license": "MIT",
     "authors": [
