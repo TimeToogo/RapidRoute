@@ -15,7 +15,8 @@
         "php": ">=5.4.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.6.0"
+        "phpunit/phpunit": "~4.6.0",
+        "satooshi/php-coveralls": "0.6.1"
     },
     "autoload": {
         "psr-4": {

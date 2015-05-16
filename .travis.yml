@@ -17,7 +17,9 @@ matrix:
 install: composer install --dev --no-interaction
 
 script:
- - phpunit --configuration "phpunit.xml.dist"
+ - mkdir -p build/logs
+ - phpunit -v --configuration "phpunit.xml.dist" --coverage-clover build/logs/clover.xml
 
 after_script:
  - php vendor/bin/coveralls -v
+
