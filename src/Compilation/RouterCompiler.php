@@ -37,6 +37,7 @@ return function ($method, $uri) {
 {static_route_map};
     }
 
+    $staticAllowedMethods = [];
     $staticRouteMatch =& $staticRoutes[$uri];
     if(isset($staticRouteMatch)) {
         if(isset($staticRouteMatch[$method])) {
@@ -44,7 +45,7 @@ return function ($method, $uri) {
         } elseif (isset($staticRouteMatch['*'])) {
             return Result::found($staticRouteMatch['*'], []);
         } else {
-            return Result::httpMethodNotAllowed(array_keys($staticRouteMatch));
+            $staticAllowedMethods = array_keys($staticRouteMatch);
         }
     }
 
@@ -114,6 +115,7 @@ PHP;
 
         $this->gotoFallback = 'anyMethodFallback';
         $this->invalidMethod = false;
+        $this->isDefault = false;
 
         foreach($dynamicRoutesGroups as $method => $methodRoutes) {
             $code->appendLine('case ' . $this->export($method) . ':');
@@ -132,6 +134,7 @@ PHP;
         $code->appendLine('}');
 
         $this->gotoFallback = 'invalidMethodFallback';
+        $this->isDefault = true;
 
         $code->appendLine('anyMethodFallback:');
 
@@ -141,7 +144,7 @@ PHP;
 
         $this->gotoFallback = null;
         $this->invalidMethod = true;
-
+        $this->isDefault = false;
 
         $code->appendLine('invalidMethodFallback:');
         $routeTree = $this->treeBuilder->build($dynamicRoutes);
@@ -273,6 +276,8 @@ PHP;
     {
         if($this->invalidMethod) {
             $this->compileDisallowedHttpMethod($code, $routeDataMap->getAllowedHttpMethods());
+        } elseif($this->isDefault && $routeDataMap->hasDefaultRouteData()) {
+            $this->compileFound($code, $routeDataMap->getDefaultRouteData(), $parameters);
         } else {
 
             foreach ($routeDataMap->getHttpMethodRouteDataMap() as $item) {
@@ -291,13 +296,13 @@ PHP;
         if($this->gotoFallback) {
             $code->appendLine('goto ' . $this->gotoFallback . ';');
         } else {
-            $code->appendLine('return Result::notFound();');
+            $code->appendLine('return $staticAllowedMethods ? Result::httpMethodNotAllowed($staticAllowedMethods) : Result::notFound();');
         }
     }
 
     protected function compileDisallowedHttpMethod(PhpBuilder $code, array $allowedMethod)
     {
-        $code->appendLine('return Result::httpMethodNotAllowed(' . $this->export($allowedMethod) . ');');
+        $code->appendLine('return Result::httpMethodNotAllowed(array_merge($staticAllowedMethods, ' . $this->export($allowedMethod) . '));');
     }
 
     protected function compileFound(PhpBuilder $code, MatchedRouteData $foundRoute, array $parameterExpressions)

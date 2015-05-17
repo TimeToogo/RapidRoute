@@ -22,6 +22,16 @@ class EdgeCasesRouterTest extends RouterTestBase
         $routes->get(['/123/{param}/bar', 'param' => '.*'], ['name' => 'all-middle-param']);
 
         $routes->get(['/object'], (object)['name' => 'object-data']);
+
+        // Order of precedence:
+        //  - static route
+        //  - static without HTTP method
+        //  - dynamic routes
+        //  - dynamic without HTTP method
+        $routes->get('/http/method/fallback', ['name' => 'http-method-fallback.static']);
+        $routes->any('/http/method/fallback', ['name' => 'http-method-fallback.static.fallback']);
+        $routes->post('/http/method/{parameter}', ['name' => 'http-method-fallback.dynamic']);
+        $routes->any('/http/method/{parameter}', ['name' => 'http-method-fallback.dynamic.fallback']);
     }
 
     /**
@@ -45,6 +55,11 @@ class EdgeCasesRouterTest extends RouterTestBase
             ['GET', '/123/a/bar', MatchResult::found(['name' => 'all-middle-param'], ['param' => 'a'])],
 
             ['GET', '/object', MatchResult::found((object)['name' => 'object-data'], [])],
+
+            ['GET', '/http/method/fallback', MatchResult::found(['name' => 'http-method-fallback.static'], [])],
+            ['POST', '/http/method/fallback', MatchResult::found(['name' => 'http-method-fallback.static.fallback'], [])],
+            ['DELETE', '/http/method/fallback', MatchResult::found(['name' => 'http-method-fallback.static.fallback'], [])],
+            ['DELETE', '/http/method/some-other', MatchResult::found(['name' => 'http-method-fallback.dynamic.fallback'], ['parameter' => 'some-other'])],
         ];
     }
 

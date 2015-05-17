@@ -148,6 +148,7 @@ class ComplexShopRouterTest extends RouterTestBase
 
             ['GET', '/admin/product', MatchResult::found(['name' => 'admin.product.index'], [])],
             ['GET', '/admin/product/create', MatchResult::found(['name' => 'admin.product.create'], [])],
+            ['TRACE', '/admin/product', MatchResult::httpMethodNotAllowed(['GET', 'HEAD', 'POST'])],
             ['POST', '/admin/product/create', MatchResult::httpMethodNotAllowed(['GET', 'HEAD'])],
             ['GET', '/admin/product/1', MatchResult::found(['name' => 'admin.product.show'], ['product_id' => '1'])],
             ['HEAD', '/admin/product/123', MatchResult::found(['name' => 'admin.product.show'], ['product_id' => '123'])],
