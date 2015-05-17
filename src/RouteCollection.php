@@ -41,7 +41,7 @@ class RouteCollection
      * Adds a route for a GET http request matching the supplied pattern to the collection.
      *
      * @param array|string $pattern
-     * @param array|object $data
+     * @param mixed $data
      *
      * @return void
      */
@@ -54,7 +54,7 @@ class RouteCollection
      * Adds a route for a POST http request matching the supplied pattern to the collection.
      *
      * @param array|string $pattern
-     * @param array|object $data
+     * @param mixed $data
      *
      * @return void
      */
@@ -67,7 +67,7 @@ class RouteCollection
      * Adds a route for a PUT http request matching the supplied pattern to the collection.
      *
      * @param array|string $pattern
-     * @param array|object $data
+     * @param mixed $data
      *
      * @return void
      */
@@ -80,7 +80,7 @@ class RouteCollection
      * Adds a route for a PATCH http request matching the supplied pattern to the collection.
      *
      * @param array|string $pattern
-     * @param array|object $data
+     * @param mixed $data
      *
      * @return void
      */
@@ -93,7 +93,7 @@ class RouteCollection
      * Adds a route for a DELETE http request matching the supplied pattern to the collection.
      *
      * @param array|string $pattern
-     * @param array|object $data
+     * @param mixed $data
      *
      * @return void
      */
@@ -106,7 +106,7 @@ class RouteCollection
      * Adds a route for an http request matching the supplied pattern to the collection.
      *
      * @param array|string $pattern
-     * @param array|object $data
+     * @param mixed $data
      *
      * @return void
      */

@@ -5,6 +5,7 @@ namespace RapidRoute\Tests\Integration;
 use RapidRoute\RapidRouteException;
 use RapidRoute\RouteCollection;
 use RapidRoute\MatchResult;
+use RapidRoute\Tests\Helpers\CustomClass;
 
 /**
  * @author Elliot Levin <elliotlevin@hotmail.com>
@@ -22,6 +23,10 @@ class EdgeCasesRouterTest extends RouterTestBase
         $routes->get(['/123/{param}/bar', 'param' => '.*'], ['name' => 'all-middle-param']);
 
         $routes->get(['/object'], (object)['name' => 'object-data']);
+        $routes->get(['/custom-class'], new CustomClass());
+        $routes->get(['/string'], 'some-string');
+        $routes->get(['/int'], 123);
+        $routes->get(['/bool'], false);
 
         // Order of precedence:
         //  - static route
@@ -55,6 +60,10 @@ class EdgeCasesRouterTest extends RouterTestBase
             ['GET', '/123/a/bar', MatchResult::found(['name' => 'all-middle-param'], ['param' => 'a'])],
 
             ['GET', '/object', MatchResult::found((object)['name' => 'object-data'], [])],
+            ['GET', '/custom-class', MatchResult::found(new CustomClass(), [])],
+            ['GET', '/string', MatchResult::found('some-string', [])],
+            ['GET', '/int', MatchResult::found(123, [])],
+            ['GET', '/bool', MatchResult::found(false, [])],
 
             ['GET', '/http/method/fallback', MatchResult::found(['name' => 'http-method-fallback.static'], [])],
             ['POST', '/http/method/fallback', MatchResult::found(['name' => 'http-method-fallback.static.fallback'], [])],

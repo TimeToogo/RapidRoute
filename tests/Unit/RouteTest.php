@@ -19,6 +19,8 @@ class RouteTest extends RapidRouteTest
     {
         new Route(['GET'], [], ['data']);
         new Route(Route::ALLOW_ANY_METHOD, [], (object)['data']);
+        new Route(Route::ALLOW_ANY_METHOD, [], null);
+        new Route(Route::ALLOW_ANY_METHOD, [], 'some-string');
     }
 
     public function testConvertsHttpMethodToUppercase()
@@ -46,12 +48,6 @@ class RouteTest extends RapidRouteTest
     {
         $this->setExpectedException(RapidRouteException::getType());
         new Route([], [], ['data']);
-    }
-
-    public function testConstructorThrowsExceptionForInvalidRouteData()
-    {
-        $this->setExpectedException(InvalidRouteDataException::getType());
-        new Route(['GET'], [], null);
     }
 
     public function testGetters()

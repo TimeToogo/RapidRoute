@@ -52,7 +52,7 @@ class MatchResult
     {
         $result = new MatchResult();
 
-        switch($resultArray[0]) {
+        switch ($resultArray[0]) {
             case MatchResult::FOUND:
                 list($result->status, $result->routeData, $result->parameters) = $resultArray;
                 break;
@@ -66,7 +66,9 @@ class MatchResult
                 break;
 
             default:
-                throw new RapidRouteException(sprintf('Cannot construct %s: invalid results status %s given', __CLASS__, $resultArray[0]));
+                throw new RapidRouteException(
+                    sprintf('Cannot construct %s: invalid results status %s given', __CLASS__, $resultArray[0])
+                );
         }
 
         return $result;
@@ -86,7 +88,7 @@ class MatchResult
      */
     public function toArray()
     {
-        switch($this->status) {
+        switch ($this->status) {
             case MatchResult::FOUND:
                 return [MatchResult::FOUND, $this->routeData, $this->parameters];
 
@@ -123,8 +125,8 @@ class MatchResult
     /**
      * Returns a FOUND router response
      *
-     * @param object|array $data
-     * @param array        $parameters
+     * @param mixed $data
+     * @param array $parameters
      *
      * @return MatchResult
      * @throws InvalidRouteDataException
@@ -178,7 +180,7 @@ class MatchResult
     /**
      * Returns the matched route data or null if no route was matched.
      *
-     * @return array|object|null
+     * @return mixed|null
      */
     public function getRouteData()
     {

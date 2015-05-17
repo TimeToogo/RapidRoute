@@ -25,7 +25,7 @@ class Route
     protected $segments;
 
     /**
-     * @var array|object
+     * @var mixed
      */
     protected $data;
 
@@ -33,10 +33,6 @@ class Route
     {
         if(is_array($httpMethods) && empty($httpMethods)) {
             throw new RapidRouteException(sprintf('Cannot construct %s: http methods not be empty', __CLASS__));
-        }
-
-        if (!is_array($data) && !is_object($data)) {
-            throw new InvalidRouteDataException($data);
         }
 
         $this->httpMethods = $httpMethods === self::ALLOW_ANY_METHOD
