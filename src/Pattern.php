@@ -13,13 +13,13 @@ final class Pattern
 
     const ANY = '.+';
 
-    const DIGITS = '[0-9]+';
+    const DIGITS = '\d+';
 
     const APLHA = '[a-zA-Z]+';
 
-    const APLHA_NUM = '[a-zA-Z0-9]+';
+    const APLHA_NUM = '[a-zA-Z\d]+';
 
-    const APLHA_NUM_DASH = '[a-zA-Z0-9\-]+';
+    const APLHA_NUM_DASH = '[a-zA-Z\d\-]+';
 
     const APLHA_UPPER = '[A-Z]+';
 
