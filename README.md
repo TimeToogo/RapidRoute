@@ -260,7 +260,7 @@ $router = new Router(
 
 $router->setDevelopmentMode($developmentMode);
 
-$result = $router->match($httpMethod, $uri);
+$result = $router->match($_SERVER['REQUEST_METHOD'], parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
 
 switch($result->getStatus()) {
     case MatchStatus::NOT_FOUND:
@@ -282,7 +282,7 @@ switch($result->getStatus()) {
 
 ```
 
-Here are some examples of how this set up should handle the incomming request:
+Here are some examples of how this set up should handle the incoming request:
 
 | Request        | Dispatched Handler                             | 
 |----------------|------------------------------------------------| 
