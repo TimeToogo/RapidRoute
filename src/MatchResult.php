@@ -34,16 +34,78 @@ class MatchResult
     protected $allowedHttpMethods;
 
     /**
+     * Constructs a match results object from the supplied array.
+     * The expected format is one of:
+     *
+     * [0 => MatchResult::FOUND, 1 => <route data>, 2 => <parameter array>]
+     *
+     * [0 => MatchResult::HTTP_METHOD_NOT_ALLOWED, 1 => <allowed http methods array>]
+     *
+     * [0 => MatchResult::NOT_FOUND]
+     *
+     * @param array $resultArray
+     *
+     * @return MatchResult
+     * @throws RapidRouteException
+     */
+    public static function fromArray(array $resultArray)
+    {
+        $result = new MatchResult();
+
+        switch($resultArray[0]) {
+            case MatchResult::FOUND:
+                list($result->status, $result->routeData, $result->parameters) = $resultArray;
+                break;
+
+            case MatchResult::HTTP_METHOD_NOT_ALLOWED:
+                list($result->status, $result->allowedHttpMethods) = $resultArray;
+                break;
+
+            case MatchResult::NOT_FOUND:
+                $result->status = MatchResult::NOT_FOUND;
+                break;
+
+            default:
+                throw new RapidRouteException(sprintf('Cannot construct %s: invalid results status %s given', __CLASS__, $resultArray[0]));
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns the match result status in the equivalent array format.
+     * One of:
+     *
+     * [0 => MatchResult::FOUND, 1 => <route data>, 2 => <parameter array>]
+     *
+     * [0 => MatchResult::HTTP_METHOD_NOT_ALLOWED, 1 => <allowed http methods array>]
+     *
+     * [0 => MatchResult::NOT_FOUND]
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        switch($this->status) {
+            case MatchResult::FOUND:
+                return [MatchResult::FOUND, $this->routeData, $this->parameters];
+
+            case MatchResult::HTTP_METHOD_NOT_ALLOWED:
+                return [MatchResult::HTTP_METHOD_NOT_ALLOWED, $this->allowedHttpMethods];
+
+            default:
+                return [MatchResult::NOT_FOUND];
+        }
+    }
+
+    /**
      * Returns a NOT_FOUND router response
      *
      * @return MatchResult
      */
     public static function notFound()
     {
-        $result = new MatchResult();
-        $result->status = MatchResult::NOT_FOUND;
-
-        return $result;
+        return MatchResult::fromArray([MatchResult::NOT_FOUND]);
     }
 
     /**
@@ -55,11 +117,7 @@ class MatchResult
      */
     public static function httpMethodNotAllowed(array $allowedHttpMethods)
     {
-        $result = new MatchResult();
-        $result->status = MatchResult::HTTP_METHOD_NOT_ALLOWED;
-        $result->allowedHttpMethods = $allowedHttpMethods;
-
-        return $result;
+        return MatchResult::fromArray([MatchResult::HTTP_METHOD_NOT_ALLOWED, $allowedHttpMethods]);
     }
 
     /**
@@ -73,12 +131,7 @@ class MatchResult
      */
     public static function found($data, array $parameters)
     {
-        $result = new MatchResult();
-        $result->status = MatchResult::FOUND;
-        $result->routeData = $data;
-        $result->parameters = $parameters;
-
-        return $result;
+        return MatchResult::fromArray([MatchResult::FOUND, $data, $parameters]);
     }
 
     /**

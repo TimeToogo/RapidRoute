@@ -2,6 +2,7 @@
 
 namespace RapidRoute\Tests\Integration;
 
+use RapidRoute\CompiledRouter;
 use RapidRoute\RouteCollection;
 use RapidRoute\Router;
 use RapidRoute\MatchResult;
@@ -18,6 +19,11 @@ abstract class RouterTestBase extends RapidRouteTest
      * @var Router
      */
     protected $router;
+
+    /**
+     * @var callable
+     */
+    protected $compiledRouter;
 
     public function setUp()
     {

@@ -3,7 +3,9 @@
 namespace RapidRoute\Tests\Unit\Compilation;
 
 use RapidRoute\Compilation\Matchers\CompoundMatcher;
+use RapidRoute\Compilation\Matchers\RegexMatcher;
 use RapidRoute\Compilation\Matchers\StaticMatcher;
+use RapidRoute\Pattern;
 use RapidRoute\Tests\RapidRouteTest;
 
 /**
@@ -24,5 +26,13 @@ class SegmentMatcherTest extends RapidRouteTest
         $this->assertSame([0 => '$segment'], $matcher1->getMatchedParameterExpressions('$segment', 0));
         $this->assertSame('$segment === \'a\' && $segment === \'c\'', $matcher2->getConditionExpression('$segment', 0));
         $this->assertSame([0 => '$segment', 1 => '$segment'], $matcher2->getMatchedParameterExpressions('$segment', 0));
+    }
+
+    public function testRegexMatcherFromFactoryMethod()
+    {
+        $matcher = RegexMatcher::from(Pattern::ANY, 12);
+
+        $this->assertSame('/^(.+)$/', $matcher->regex);
+        $this->assertSame([12], $matcher->getParameterKeys());
     }
 }

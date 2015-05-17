@@ -47,20 +47,11 @@ class RouteParser
         array_shift($patternSegments);
 
         foreach ($patternSegments as $key => $patternSegment) {
-            if ($patternSegment === '') {
-                $segments[] = new StaticSegment('');
-            } elseif ($this->matchRouteParameters($pattern, $patternSegment, $matches, $names)) {
+            if ($this->matchRouteParameters($pattern, $patternSegment, $matches, $names)) {
                 $regex = $this->compileSegmentRegex($matches, $conditions);
 
                 $segments[] = new ParameterSegment($names, $regex);
             } else {
-                if (strpos($patternSegment, '{') !== false || strpos($patternSegment, '}') !== false) {
-                    throw new InvalidRoutePatternException(sprintf(
-                        'Invalid route pattern: contain \'/\' within parameter name',
-                        $pattern
-                    ));
-                }
-
                 $segments[] = new StaticSegment($patternSegment);
             }
         }

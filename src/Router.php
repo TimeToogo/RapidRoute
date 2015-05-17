@@ -3,9 +3,14 @@
 namespace RapidRoute;
 
 use RapidRoute\Compilation\RouterCompiler;
+use RapidRoute\Compilation\TreeBasedRouterCompiler;
 
 /**
- * The router class
+ * The router class is a higher level entry point to the RapidRoute API.
+ *
+ * This class will wrap the array from the compiled router in an instance
+ * of the MatchResult class as well as providing some other helper
+ * methods for dealing with the compiled router.
  *
  * @author Elliot Levin <elliotlevin@hotmail.com>
  */
@@ -39,9 +44,20 @@ class Router
         $this->routeDefinitionsCallback = $routeDefinitionsCallback;
     }
 
+    /**
+     * @return RouteCollection
+     */
     protected function buildRouteCollection()
     {
         return new RouteCollection(new RouteParser());
+    }
+
+    /**
+     * @return RouterCompiler
+     */
+    protected function buildRouterCompiler()
+    {
+        return new TreeBasedRouterCompiler();
     }
 
     /**
@@ -73,18 +89,32 @@ class Router
      */
     public function match($httpMethod, $uri)
     {
-        if($this->compiledRouter === null) {
-            if (!$this->developmentMode && file_exists($this->compiledRouterPath)) {
-                $this->compiledRouter = require $this->compiledRouterPath;
-            } else {
-                $this->saveCompiledRouter();
-                $this->compiledRouter = require $this->compiledRouterPath;
-            }
+        $compiledRouter = $this->getCompiledRouter();
+
+        return MatchResult::fromArray($compiledRouter($httpMethod, $uri));
+    }
+
+    /**
+     * Gets the compiled router callable.
+     * The callable signature is:
+     *
+     * function ($httpMethod, $uri) : array
+     *
+     * @return callable
+     */
+    public function getCompiledRouter()
+    {
+        if ($this->compiledRouter === null) {
+            $this->compiledRouter = CompiledRouter::generate(
+                $this->compiledRouterPath,
+                $this->routeDefinitionsCallback,
+                function () { return $this->buildRouteCollection(); },
+                function () { return $this->buildRouterCompiler(); },
+                $this->developmentMode
+            );
         }
 
-        $compiledRouter = $this->compiledRouter;
-
-        return $compiledRouter($httpMethod, $uri);
+        return $this->compiledRouter;
     }
 
     /**
@@ -99,27 +129,5 @@ class Router
         }
 
         $this->compiledRouter = null;
-    }
-
-    /**
-     * @return void
-     */
-    protected function saveCompiledRouter()
-    {
-        file_put_contents($this->compiledRouterPath, $this->compileRouterFile());
-    }
-
-    /**
-     * @return string
-     */
-    protected function compileRouterFile()
-    {
-        $definitionsCallback = $this->routeDefinitionsCallback;
-        $routes              = $this->buildRouteCollection();
-        $definitionsCallback($routes);
-
-        $compiler = new RouterCompiler();
-
-        return $compiler->compileRoutesToPhpClosure($routes);
     }
 }

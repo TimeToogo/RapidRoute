@@ -3,7 +3,6 @@
 namespace RapidRoute\RouteSegments;
 
 use RapidRoute\Compilation\Matchers\RegexMatcher;
-use RapidRoute\Compilation\Matchers\SegmentMatcher;
 use RapidRoute\Pattern;
 
 /**

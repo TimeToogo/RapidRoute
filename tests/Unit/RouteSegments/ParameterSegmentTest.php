@@ -37,4 +37,12 @@ class ParameterSegmentTest extends RouteSegmentTestBase
         $this->assertSame($segment->getRegex(), $matcher->regex);
         $this->assertSame([0 => 'param'], $parameters);
     }
+
+    public function testGetNames()
+    {
+        /** @var ParameterSegment $segment */
+        $segment = $this->buildRouteSegment();
+
+        $this->assertSame(['param'], $segment->getNames());
+    }
 }

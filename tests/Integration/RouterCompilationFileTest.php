@@ -41,10 +41,11 @@ class RouterCompilationFileTest extends RapidRouteTest
         $router->match('GET', '/');
 
         $this->assertSame(1, $called, 'Should have called route definitions once');
+        $this->assertInternalType('callable', $router->getCompiledRouter());
         $this->assertFileExists($this->compiledFilePath);
 
         $compiledRouter = require $this->compiledFilePath;
-        $this->assertInstanceOf('Closure', $compiledRouter);
+        $this->assertInternalType('callable', $compiledRouter);
 
         // Pretend this is a new request, so should it should check if
         // the router has already been compiled and not recompile
