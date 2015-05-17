@@ -24,7 +24,7 @@ class MatchResultTest extends RapidRouteTest
      */
     public function testFound(MatchResult $result)
     {
-        $this->assertSame($result->status(), MatchResult::FOUND);
+        $this->assertSame($result->getStatus(), MatchResult::FOUND);
 
         $this->assertTrue($result->isFound());
         $this->assertFalse($result->isNotFound());
@@ -51,7 +51,7 @@ class MatchResultTest extends RapidRouteTest
      */
     public function testNotFound(MatchResult $result)
     {
-        $this->assertSame($result->status(), MatchResult::NOT_FOUND);
+        $this->assertSame($result->getStatus(), MatchResult::NOT_FOUND);
 
         $this->assertTrue($result->isNotFound());
         $this->assertFalse($result->isFound());
@@ -79,7 +79,7 @@ class MatchResultTest extends RapidRouteTest
      */
     public function testHttpMethodNotAllowed(MatchResult $result)
     {
-        $this->assertSame($result->status(), MatchResult::HTTP_METHOD_NOT_ALLOWED);
+        $this->assertSame($result->getStatus(), MatchResult::HTTP_METHOD_NOT_ALLOWED);
 
         $this->assertTrue($result->isDisallowedHttpMethod());
         $this->assertFalse($result->isFound());

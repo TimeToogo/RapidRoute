@@ -142,7 +142,7 @@ class MatchResult
      *
      * @return int
      */
-    public function status()
+    public function getStatus()
     {
         return $this->status;
     }
