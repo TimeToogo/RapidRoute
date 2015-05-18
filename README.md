@@ -323,7 +323,6 @@ Route definitions:
 $router = CompiledRouter::generate(
     __DIR__ . '/compiled/rr.php',
     function (\RapidRoute\RouteCollection $routes) {
-        $routes->param('page_slug', Pattern::APLHA_NUM_DASH);
         $routes->param('post_slug', Pattern::APLHA_NUM_DASH);
 
         $routes->get('/', ['name' => 'home']);
@@ -357,27 +356,23 @@ return function ($method, $uri) {
                     case 'HEAD':
                         return [2, ['name' => 'home'], []];
                     default:
-                        return [1, [
-                            0 => 'GET',
-                            1 => 'HEAD',
-                        ]];
+                        $allowedHttpMethods[] = 'GET';
+                        $allowedHttpMethods[] = 'HEAD';
+                        break;
                 }
             }
-            elseif ($s0 === 'blog') {
+            if ($s0 === 'blog') {
                 switch ($method) {
                     case 'GET':
                     case 'HEAD':
                         return [2, ['name' => 'blog.index'], []];
                     default:
-                        return [1, [
-                            0 => 'GET',
-                            1 => 'HEAD',
-                        ]];
+                        $allowedHttpMethods[] = 'GET';
+                        $allowedHttpMethods[] = 'HEAD';
+                        break;
                 }
             }
-            else {
-                return [0];
-            }
+            return isset($allowedHttpMethods) ? [1, $allowedHttpMethods] : [0];
             break;
         
         case 3:
@@ -388,15 +383,12 @@ return function ($method, $uri) {
                     case 'HEAD':
                         return [2, ['name' => 'blog.post.show'], ['post_slug' => $s2]];
                     default:
-                        return [1, [
-                            0 => 'GET',
-                            1 => 'HEAD',
-                        ]];
+                        $allowedHttpMethods[] = 'GET';
+                        $allowedHttpMethods[] = 'HEAD';
+                        break;
                 }
             }
-            else {
-                return [0];
-            }
+            return isset($allowedHttpMethods) ? [1, $allowedHttpMethods] : [0];
             break;
         
         case 4:
@@ -406,12 +398,11 @@ return function ($method, $uri) {
                     case 'POST':
                         return [2, ['name' => 'blog.post.comment'], ['post_slug' => $s2]];
                     default:
-                        return [1, [0 => 'POST']];
+                        $allowedHttpMethods[] = 'POST';
+                        break;
                 }
             }
-            else {
-                return [0];
-            }
+            return isset($allowedHttpMethods) ? [1, $allowedHttpMethods] : [0];
             break;
         
         default:
