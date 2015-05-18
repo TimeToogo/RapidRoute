@@ -44,11 +44,12 @@ class RouteTreeBuilder
                 $segments              = $route->getSegments();
                 /** @var RouteSegment $firstSegment */
                 $firstSegment     = array_shift($segments);
-                $firstSegmentHash = $firstSegment->getMatcher($parameterIndexNameMap)->getHash();
+                $segmentMatcher   = $firstSegment->getMatcher($parameterIndexNameMap);
+                $firstSegmentHash = $segmentMatcher->getHash();
 
                 if (!isset($groupNodes[$firstSegmentHash])) {
                     $groupNodes[$firstSegmentHash] = RouteTreeNode::create(
-                        [0 => $firstSegment->getMatcher($parameterIndexNameMap)],
+                        [0 => $segmentMatcher],
                         $segmentDepth === 1
                     );
                 }

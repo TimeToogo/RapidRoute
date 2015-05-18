@@ -11,7 +11,6 @@ use RapidRoute\Compilation\RouteTree\RouteTreeBuilder;
 use RapidRoute\Compilation\RouteTree\RouteTreeNode;
 use RapidRoute\Pattern;
 use RapidRoute\Route;
-use RapidRoute\RouteCollection;
 use RapidRoute\RouteSegments\ParameterSegment;
 use RapidRoute\RouteSegments\StaticSegment;
 use RapidRoute\Tests\RapidRouteTest;
@@ -39,6 +38,20 @@ class RouteTreeBuilderTest extends RapidRouteTest
                             new MatchedRouteDataMap([], new MatchedRouteData([], ['route']))
                         ),
                     ])
+                ],
+            ],
+            [
+                'routes'    => [new Route(['GET'], [ParameterSegment::from('param', Pattern::ANY)], ['root-route'])],
+                'rootRoute' => null,
+                'tree'      => [
+                    1 => new ChildrenNodeCollection([
+                        RegexMatcher::from(Pattern::ANY, 0)->getHash() => new RouteTreeNode(
+                            [0 => RegexMatcher::from(Pattern::ANY, 0)],
+                            new MatchedRouteDataMap([
+                                [['GET', 'HEAD'], new MatchedRouteData([0 => 'param'], ['root-route'])]
+                            ])
+                        ),
+                ])
                 ],
             ],
             [
