@@ -17,27 +17,19 @@ All in all, this library provides the ability to match a supplied HTTP request
 Benchmarks
 ==========
 
-| Test Name                                  | Time                 | + Interval           | Change       | 
-|--------------------------------------------|----------------------|----------------------|--------------| 
-| FastRoute - First static route             | 0.0110414491         | +0.0000000000        | baseline     | 
-| FastRoute - Last static route              | 0.0111406398         | +0.0000991907        | 1% slower    | 
-| RapidRoute - First static route            | 0.0246576567         | +0.0136162077        | 123% slower  | 
-| RapidRoute - Invalid method, static route  | 0.0252214479         | +0.0141799989        | 128% slower  | 
-| RapidRoute - Non-existent route            | 0.0274607576         | +0.0164193085        | 149% slower  | 
-| RapidRoute - Last static route             | 0.0285170914         | +0.0174756423        | 158% slower  | 
-| RapidRoute - Invalid method, dynamic route | 0.0332140320         | +0.0221725830        | 201% slower  | 
-| RapidRoute - Last dynamic route            | 0.0365020815         | +0.0254606325        | 231% slower  | 
-| RapidRoute - First dynamic route           | 0.0399206390         | +0.0288791900        | 262% slower  | 
-| FastRoute - Last dynamic route             | 0.0597789312         | +0.0487374821        | 441% slower  | 
-| FastRoute - First dynamic route            | 0.0637974690         | +0.0527560199        | 478% slower  | 
-| RapidRoute - Longest route                 | 0.0735348414         | +0.0624933924        | 566% slower  | 
-| FastRoute - Longest route                  | 0.0951482958         | +0.0841068467        | 762% slower  | 
-| FastRoute - Non-existent route             | 0.1830417166         | +0.1720002676        | 1558% slower | 
-| FastRoute - Invalid method, static route   | 0.1849005604         | +0.1738591113        | 1575% slower | 
-| FastRoute - Invalid method, dynamic route  | 0.2124262940         | +0.2013848449        | 1824% slower | 
-
+| Test Name                          | RapidRoute - Time | FastRoute - Time | Relative Difference | Change      |
+| ---------------------------------- | ----------------- | ---------------- | ------------------- | ----------- |
+| First static route                 | 0.0023435072      | 0.0010140720     | +0.0013294352       | 131% slower |
+| Last static route                  | 0.0027569150      | 0.0010000578     | +0.0017568572       | 176% slower |
+| First dynamic route                | 0.0040967143      | 0.0066185051     | -0.0025217908       | 62% faster  |
+| Last dynamic route                 | 0.0034137433      | 0.0086873559     | -0.0052736126       | 154% faster |
+| Non-existent route                 | 0.0026887293      | 0.0186565538     | -0.0159678245       | 594% faster |
+| Longest route                      | 0.0072993029      | 0.0094522497     | -0.0021529467       | 29% faster  |
+| Invalid HTTP method, static route  | 0.0026721540      | 0.0194136426     | -0.0167414887       | 627% faster |
+| Invalid HTTP method, dynamic route | 0.0035317977      | 0.0213736738     | -0.0178418761       | 505% faster |
 
 These results are generated using [this benchmark suite][bench] running on PHP 5.5.
+To register a comparable time, each route operation is run a large number of times per test.
 The results are quite intriguing, clearly FastRoute comes out on top in regards to static routes.
 This is understandable given that static routes are implemented via a standard php array (hash table).
 For these tests RapidRoute is a clear winner with regards to dynamic routes (containing a variable parameter),
