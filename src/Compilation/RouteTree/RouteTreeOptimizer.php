@@ -121,30 +121,30 @@ class RouteTreeOptimizer
      */
     protected function optimizeMatcher(SegmentMatcher $matcher)
     {
-        if($matcher instanceof RegexMatcher && count($matcher->getParameterKeys()) === 1) {
-            $parameterKey = $matcher->getParameterKeys()[0];
+        if($matcher instanceof RegexMatcher && $matcher->getGroupCount() === 1) {
+            $parameterKeys = $matcher->getParameterKeys();
 
             switch($matcher->regex) {
                 case Pattern::asRegex(Pattern::ANY):
-                    return new AnyMatcher($parameterKey);
+                    return new AnyMatcher($parameterKeys);
 
                 case Pattern::asRegex(Pattern::DIGITS):
-                    return new ExpressionMatcher('ctype_digit({segment})', $parameterKey);
+                    return new ExpressionMatcher('ctype_digit({segment})', $parameterKeys);
 
                 case Pattern::asRegex(Pattern::APLHA):
-                    return new ExpressionMatcher('ctype_alpha({segment})', $parameterKey);
+                    return new ExpressionMatcher('ctype_alpha({segment})', $parameterKeys);
 
                 case Pattern::asRegex(Pattern::APLHA_LOWER):
-                    return new ExpressionMatcher('ctype_lower({segment})', $parameterKey);
+                    return new ExpressionMatcher('ctype_lower({segment})', $parameterKeys);
 
                 case Pattern::asRegex(Pattern::APLHA_UPPER):
-                    return new ExpressionMatcher('ctype_upper({segment})', $parameterKey);
+                    return new ExpressionMatcher('ctype_upper({segment})', $parameterKeys);
 
                 case Pattern::asRegex(Pattern::APLHA_NUM):
-                    return new ExpressionMatcher('ctype_alnum({segment})', $parameterKey);
+                    return new ExpressionMatcher('ctype_alnum({segment})', $parameterKeys);
 
                 case Pattern::asRegex(Pattern::APLHA_NUM_DASH):
-                    return new ExpressionMatcher('ctype_alnum(str_replace(\'-\', \'\', {segment}))', $parameterKey);
+                    return new ExpressionMatcher('ctype_alnum(str_replace(\'-\', \'\', {segment}))', $parameterKeys);
             }
         }
 
@@ -226,6 +226,7 @@ class RouteTreeOptimizer
             return strcmp($a->getHash(), $b->getHash());
         };
 
+        /** @var SegmentMatcher[] $commonMatchers */
         $commonMatchers = array_uintersect_assoc($node1->getMatchers(), $node2->getMatchers(), $matcherCompare);
 
         if(empty($commonMatchers)) {
@@ -239,6 +240,11 @@ class RouteTreeOptimizer
 
         foreach($nodes as $node) {
             $specificMatchers = array_udiff_assoc($node->getMatchers(), $commonMatchers, $matcherCompare);
+            $duplicateMatchers = array_uintersect_assoc($node->getMatchers(), $commonMatchers, $matcherCompare);
+
+            foreach($duplicateMatchers as $segmentDepth => $matcher) {
+                $commonMatchers[$segmentDepth]->mergeParameterKeys($matcher);
+            }
 
             if(empty($specificMatchers) && $node->isParentNode()) {
                 foreach($node->getContents()->getChildren() as $childNode) {

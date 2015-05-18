@@ -7,7 +7,7 @@ namespace RapidRoute\Compilation\Matchers;
  *
  * @author Elliot Levin <elliotlevin@hotmail.com>
  */
-class AnyMatcher extends SingleParameterSegmentMatcher
+class AnyMatcher extends SegmentMatcher
 {
     /**
      * @param string $segmentVariable

@@ -17,10 +17,24 @@ class RegexMatcher extends SegmentMatcher
      */
     public $regex;
 
-    public function __construct($regex, array $parameterKeys)
+    /**
+     * @var int[]
+     */
+    public $parameterKeyGroupMap;
+
+    public function __construct($regex, array $parameterKeyGroupMap)
     {
-        parent::__construct($parameterKeys);
+        parent::__construct(array_keys($parameterKeyGroupMap));
         $this->regex      = $regex;
+        $this->parameterKeyGroupMap = $parameterKeyGroupMap;
+    }
+
+    /**
+     * @return int
+     */
+    public function getGroupCount()
+    {
+        return count(array_unique($this->parameterKeyGroupMap, SORT_NUMERIC));
     }
 
     /**
@@ -31,7 +45,7 @@ class RegexMatcher extends SegmentMatcher
      */
     public static function from($pattern, $parameterKey)
     {
-        return new self(Pattern::asRegex($pattern), [$parameterKey]);
+        return new self(Pattern::asRegex($pattern), [$parameterKey => 0]);
     }
 
     /**
@@ -51,6 +65,13 @@ class RegexMatcher extends SegmentMatcher
             . ')';
     }
 
+    public function mergeParameterKeys(SegmentMatcher $matcher)
+    {
+        /** @var RegexMatcher $matcher */
+        parent::mergeParameterKeys($matcher);
+        $this->parameterKeyGroupMap += $matcher->parameterKeyGroupMap;
+    }
+
     /**
      * @param string $segmentVariable
      * @param int    $uniqueKey
@@ -61,10 +82,10 @@ class RegexMatcher extends SegmentMatcher
     {
         $matches = [];
 
-        foreach(array_values($this->parameterKeys) as $i => $parameterKey) {
-            // Use $i + 1 as the first $matches element is the full text that matched,
+        foreach($this->parameterKeyGroupMap as $parameterKey => $group) {
+            // Use $group + 1 as the first $matches element is the full text that matched,
             // we want the groups
-            $matches[$parameterKey] = '$matches' . $uniqueKey . '[' . ($i + 1) . ']';
+            $matches[$parameterKey] = '$matches' . $uniqueKey . '[' . ($group + 1) . ']';
         }
 
         return $matches;

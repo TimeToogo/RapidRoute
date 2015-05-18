@@ -7,7 +7,7 @@ namespace RapidRoute\Compilation\Matchers;
  *
  * @author Elliot Levin <elliotlevin@hotmail.com>
  */
-class ExpressionMatcher extends SingleParameterSegmentMatcher
+class ExpressionMatcher extends SegmentMatcher
 {
     const SEGMENT_PLACEHOLDER = '{segment}';
 
@@ -16,9 +16,9 @@ class ExpressionMatcher extends SingleParameterSegmentMatcher
      */
     public $expression;
 
-    public function __construct($expression, $parameterKey)
+    public function __construct($expression, $parameterKeys)
     {
-        parent::__construct($parameterKey);
+        parent::__construct($parameterKeys);
         $this->expression = $expression;
     }
 

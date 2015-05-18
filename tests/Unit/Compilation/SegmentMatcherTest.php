@@ -2,10 +2,12 @@
 
 namespace RapidRoute\Tests\Unit\Compilation;
 
+use RapidRoute\Compilation\Matchers\AnyMatcher;
 use RapidRoute\Compilation\Matchers\CompoundMatcher;
 use RapidRoute\Compilation\Matchers\RegexMatcher;
 use RapidRoute\Compilation\Matchers\StaticMatcher;
 use RapidRoute\Pattern;
+use RapidRoute\RapidRouteException;
 use RapidRoute\Tests\RapidRouteTest;
 
 /**
@@ -34,5 +36,35 @@ class SegmentMatcherTest extends RapidRouteTest
 
         $this->assertSame('/^(.+)$/', $matcher->regex);
         $this->assertSame([12], $matcher->getParameterKeys());
+        $this->assertSame([12 => 0], $matcher->parameterKeyGroupMap);
+    }
+
+    public function testAnyMergingParameterKeys()
+    {
+        $matcher1 = new AnyMatcher([123]);
+        $matcher2 = new AnyMatcher([12, 3]);
+
+        $matcher1->mergeParameterKeys($matcher2);
+
+        $this->assertSame([123, 12, 3], $matcher1->getParameterKeys());
+    }
+
+    public function testRegexMergingParameterKeys()
+    {
+        $matcher1 = RegexMatcher::from(Pattern::ANY, 12);
+        $matcher2 = RegexMatcher::from(Pattern::ANY, 11);
+
+        $matcher1->mergeParameterKeys($matcher2);
+        $this->assertSame([12, 11], $matcher1->getParameterKeys());
+        $this->assertSame([12 => 0, 11 => 0], $matcher1->parameterKeyGroupMap);
+    }
+
+    public function testMatchersMustBeEqualWhenMergingParameters()
+    {
+        $this->setExpectedException(RapidRouteException::getType());
+        $matcher1 = RegexMatcher::from(Pattern::ANY, 12);
+        $matcher2 = RegexMatcher::from(Pattern::DIGITS, 11);
+
+        $matcher1->mergeParameterKeys($matcher2);
     }
 }

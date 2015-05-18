@@ -57,15 +57,16 @@ class ParameterSegment extends RouteSegment
 
     public function getMatcher(array &$parameterIndexNameMap)
     {
-        $maxKey = empty($parameterIndexNameMap) ? 0 : max(array_keys($parameterIndexNameMap)) + 1;
-        $parameterKeys = [];
+        $parameterKey = empty($parameterIndexNameMap) ? 0 : max(array_keys($parameterIndexNameMap)) + 1;
+        $parameterKeyGroupMap = [];
+        $group = 0;
 
         foreach($this->names as $name) {
-            $parameterIndexNameMap[$maxKey] = $name;
-            $parameterKeys[] = $maxKey;
-            $maxKey += 1;
+            $parameterIndexNameMap[$parameterKey] = $name;
+            $parameterKeyGroupMap[$parameterKey] = $group++;
+            $parameterKey++;
         }
 
-        return new RegexMatcher($this->regex, $parameterKeys);
+        return new RegexMatcher($this->regex, $parameterKeyGroupMap);
     }
 }

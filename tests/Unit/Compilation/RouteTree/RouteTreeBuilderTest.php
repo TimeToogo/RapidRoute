@@ -51,7 +51,40 @@ class RouteTreeBuilderTest extends RapidRouteTest
                                 [['GET', 'HEAD'], new MatchedRouteData([0 => 'param'], ['root-route'])]
                             ])
                         ),
-                ])
+                    ])
+                ],
+            ],
+            [
+                'routes'    => [
+                    new Route(['GET'], [new StaticSegment('first'), ParameterSegment::from('param1', Pattern::ANY)], ['static-first']),
+                    new Route(['GET'], [ParameterSegment::from('param1', Pattern::ANY), ParameterSegment::from('param2', Pattern::ANY)], ['dynamic']),
+                ],
+                'rootRoute' => null,
+                'tree'      => [
+                    2 => new ChildrenNodeCollection([
+                        (new StaticMatcher('first'))->getHash() => new RouteTreeNode(
+                            [0 => new StaticMatcher('first')],
+                            new ChildrenNodeCollection([
+                                RegexMatcher::from(Pattern::ANY, 0)->getHash() => new RouteTreeNode(
+                                    [1 => RegexMatcher::from(Pattern::ANY, 0)],
+                                    new MatchedRouteDataMap([
+                                        [['GET', 'HEAD'], new MatchedRouteData([0 => 'param1'], ['static-first'])]
+                                    ])
+                                ),
+                            ])
+                        ),
+                        RegexMatcher::from(Pattern::ANY, 0)->getHash() => new RouteTreeNode(
+                            [0 => RegexMatcher::from(Pattern::ANY, 0)],
+                            new ChildrenNodeCollection([
+                                RegexMatcher::from(Pattern::ANY, 1)->getHash() => new RouteTreeNode(
+                                    [1 => RegexMatcher::from(Pattern::ANY, 1)],
+                                    new MatchedRouteDataMap([
+                                        [['GET', 'HEAD'], new MatchedRouteData([0 => 'param1', 1 => 'param2'], ['dynamic'])]
+                                    ])
+                                ),
+                            ])
+                        ),
+                    ])
                 ],
             ],
             [

@@ -2,6 +2,8 @@
 
 namespace RapidRoute\Compilation\Matchers;
 
+use RapidRoute\RapidRouteException;
+
 /**
  * The base route segment matcher class
  *
@@ -51,7 +53,21 @@ abstract class SegmentMatcher
      */
     public function getMatchedParameterExpressions($segmentVariable, $uniqueKey)
     {
-        return [$this->parameterKeys[0] => $segmentVariable];
+        return array_fill_keys($this->parameterKeys, $segmentVariable);
+    }
+
+    public function mergeParameterKeys(SegmentMatcher $matcher)
+    {;
+        if($matcher->getHash() !== $this->getHash()) {
+            throw new RapidRouteException(
+                sprintf('Cannot merge parameters: matchers must be equivalent, \'%s\' expected, \'%s\' given', get_class($matcher), $this->getHash())
+            );
+        }
+
+        $this->parameterKeys = array_unique(
+            array_merge($this->parameterKeys, $matcher->parameterKeys),
+            SORT_NUMERIC
+        );
     }
 
     /**
