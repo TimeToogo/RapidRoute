@@ -2,6 +2,7 @@
 
 namespace RapidRoute\Tests\Integration;
 
+use RapidRoute\Pattern;
 use RapidRoute\RapidRouteException;
 use RapidRoute\RouteCollection;
 use RapidRoute\MatchResult;
@@ -37,6 +38,13 @@ class EdgeCasesRouterTest extends RouterTestBase
         $routes->any('/http/method/fallback', ['name' => 'http-method-fallback.static.fallback']);
         $routes->post('/http/method/{parameter}', ['name' => 'http-method-fallback.dynamic']);
         $routes->any('/http/method/{parameter}', ['name' => 'http-method-fallback.dynamic.fallback']);
+
+        // Should detect allowed HTTP methods
+        $routes->get('/allowed-methods/foo', ['name' => 'allowed-methods.static']);
+        $routes->post('/allowed-methods/{parameter}', ['name' => 'allowed-methods.dynamic']);
+
+        $routes->get(['/complex-methods/{param}/foo/bar', 'param' => Pattern::DIGITS], ['name' => 'complex-methods.first']);
+        $routes->post(['/complex-methods/{param}/foo/{param2}', 'param' => Pattern::APLHA_NUM], ['name' => 'complex-methods.second']);
     }
 
     /**
@@ -69,6 +77,17 @@ class EdgeCasesRouterTest extends RouterTestBase
             ['POST', '/http/method/fallback', MatchResult::found(['name' => 'http-method-fallback.static.fallback'], [])],
             ['DELETE', '/http/method/fallback', MatchResult::found(['name' => 'http-method-fallback.static.fallback'], [])],
             ['DELETE', '/http/method/some-other', MatchResult::found(['name' => 'http-method-fallback.dynamic.fallback'], ['parameter' => 'some-other'])],
+
+            ['GET', '/allowed-methods/foo', MatchResult::found(['name' => 'allowed-methods.static'], [])],
+            ['GET', '/allowed-methods/bar', MatchResult::httpMethodNotAllowed(['POST'])],
+            ['POST', '/allowed-methods/bar', MatchResult::found(['name' => 'allowed-methods.dynamic'], ['parameter' => 'bar'])],
+            ['DELETE', '/allowed-methods/foo', MatchResult::httpMethodNotAllowed(['GET', 'HEAD', 'POST'])],
+
+            ['GET', '/complex-methods/123/foo/bar', MatchResult::found(['name' => 'complex-methods.first'], ['param' => '123'])],
+            ['POST', '/complex-methods/123/foo/bar', MatchResult::found(['name' => 'complex-methods.second'], ['param' => '123', 'param2' => 'bar'])],
+            ['PATCH', '/complex-methods/123/foo/bar', MatchResult::httpMethodNotAllowed(['GET', 'HEAD', 'POST'])],
+            ['PATCH', '/complex-methods/abc123/foo/bar', MatchResult::httpMethodNotAllowed(['POST'])],
+            ['PATCH', '/complex-methods/123/foo/abc', MatchResult::httpMethodNotAllowed(['POST'])],
         ];
     }
 

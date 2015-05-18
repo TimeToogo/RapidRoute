@@ -101,6 +101,7 @@ PHP;
 
             $code->appendLine('list(' . implode(', ', $segmentVariables) . ') = $segments;');
             $this->compileSegmentNodes($code, $nodes, $segmentVariables);
+            $this->compileDisallowedHttpMethodOrNotFound($code);
 
             $code->appendLine('break;');
             $code->indent--;
@@ -116,11 +117,8 @@ PHP;
         $code->append('}');
     }
 
-    protected function compileSegmentNodes(PhpBuilder $code, ChildrenNodeCollection $nodes, array $segmentVariables, $notFound = true, array $parameters = array())
+    protected function compileSegmentNodes(PhpBuilder $code, ChildrenNodeCollection $nodes, array $segmentVariables, array $parameters = array())
     {
-        $exclusiveCases = $nodes->areChildrenExclusive();
-        $first = true;
-
         foreach ($nodes->getChildren() as $node) {
             /** @var SegmentMatcher[] $segmentMatchers */
             $segmentMatchers  = $node->getMatchers();
@@ -133,8 +131,7 @@ PHP;
                 $conditions[] = $matcher->getConditionExpression($segmentVariables[$segmentDepth], $count++);
             }
 
-            $conditional = ($first || !$exclusiveCases) ? 'if' : 'elseif';
-            $code->appendLine($conditional . ' (' . implode(' && ', $conditions) . ') {');
+            $code->appendLine('if (' . implode(' && ', $conditions) . ') {');
             $code->indent++;
 
             $count = $currentParameter;
@@ -149,26 +146,11 @@ PHP;
             if ($node->isLeafNode()) {
                 $this->compiledRouteHttpMethodMatch($code, $node->getContents(), $parameters);
             } else {
-                $this->compileSegmentNodes($code, $node->getContents(), $segmentVariables, $exclusiveCases, $parameters);
+                $this->compileSegmentNodes($code, $node->getContents(), $segmentVariables, $parameters);
             }
 
             $code->indent--;
             $code->appendLine('}');
-            $first = false;
-        }
-
-        if($notFound) {
-            if($exclusiveCases) {
-                $code->appendLine('else {');
-                $code->indent++;
-            }
-
-            $this->compileNotFound($code);
-
-            if($exclusiveCases) {
-                $code->indent--;
-                $code->appendLine('}');
-            }
         }
     }
 
@@ -195,7 +177,10 @@ PHP;
         if ($routeDataMap->hasDefaultRouteData()) {
             $this->compileFound($code, $routeDataMap->getDefaultRouteData(), $parameters);
         } else {
-            $this->compileDisallowedHttpMethod($code, $routeDataMap->getAllowedHttpMethods());
+            foreach($routeDataMap->getAllowedHttpMethods() as $method) {
+                $code->appendLine('$allowedHttpMethods[] = ' . $this->export($method) . ';');
+            }
+            $code->appendLine('break;');
         }
 
         $code->indent--;
@@ -212,6 +197,20 @@ PHP;
     protected function compileDisallowedHttpMethod(PhpBuilder $code, array $allowedMethod)
     {
         $code->appendLine('return [' . $this->export(MatchResult::HTTP_METHOD_NOT_ALLOWED) . ', ' . $this->export($allowedMethod) . '];');
+    }
+
+    protected function compileDisallowedHttpMethodOrNotFound(PhpBuilder $code)
+    {
+        $code->appendLine('return ' .
+            'isset($allowedHttpMethods) '
+            . '? '
+            . '['
+            . $this->export(MatchResult::HTTP_METHOD_NOT_ALLOWED)
+            . ', $allowedHttpMethods] '
+            . ': '
+            . '['
+            . $this->export(MatchResult::NOT_FOUND)
+            . '];');
     }
 
     protected function compileFound(PhpBuilder $code, MatchedRouteData $foundRoute, array $parameterExpressions)

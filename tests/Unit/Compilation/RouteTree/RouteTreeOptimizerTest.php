@@ -240,12 +240,12 @@ class RouteTreeOptimizerTest extends RapidRouteTest
                                 0 => new StaticMatcher('abc'),
                                 3 => new StaticMatcher('def'),
                             ],
-                            ChildrenNodeCollection::nonExclusive([
+                            new ChildrenNodeCollection([
                                 new RouteTreeNode(
                                     [
                                         2 => new StaticMatcher('1'),
                                     ],
-                                    ChildrenNodeCollection::nonExclusive([])),
+                                    new ChildrenNodeCollection([])),
                                 new RouteTreeNode(
                                     [
                                         2 => new StaticMatcher('3'),

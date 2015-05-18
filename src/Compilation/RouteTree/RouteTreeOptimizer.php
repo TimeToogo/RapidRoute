@@ -249,6 +249,6 @@ class RouteTreeOptimizer
             }
         }
 
-        return new RouteTreeNode($commonMatchers, ChildrenNodeCollection::nonExclusive($children));
+        return new RouteTreeNode($commonMatchers, new ChildrenNodeCollection($children));
     }
 }

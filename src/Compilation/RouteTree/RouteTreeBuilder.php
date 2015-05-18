@@ -3,7 +3,6 @@
 namespace RapidRoute\Compilation\RouteTree;
 
 use RapidRoute\Route;
-use RapidRoute\RouteCollection;
 use RapidRoute\RouteSegments\RouteSegment;
 
 /**

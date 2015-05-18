@@ -16,33 +16,9 @@ class ChildrenNodeCollection extends NodeContentsBase
      */
     protected $children;
 
-    /**
-     * @var bool
-     */
-    protected $childrenAreExclusive;
-
-    public function __construct(array $children = [], $childrenAreExclusive = true)
+    public function __construct(array $children = [])
     {
-        $this->children             = $children;
-        $this->childrenAreExclusive = $childrenAreExclusive;
-    }
-
-    /**
-     * @param RouteTreeNode[] $children
-     *
-     * @return ChildrenNodeCollection
-     */
-    public static function nonExclusive(array $children)
-    {
-        return new self($children, false);
-    }
-
-    /**
-     * @return bool
-     */
-    public function areChildrenExclusive()
-    {
-        return $this->childrenAreExclusive;
+        $this->children = $children;
     }
 
     /**

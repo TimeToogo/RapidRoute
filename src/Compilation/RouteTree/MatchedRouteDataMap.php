@@ -90,7 +90,7 @@ class MatchedRouteDataMap extends NodeContentsBase
     public function addRoute(Route $route, array $parameterIndexNameMap)
     {
         if ($route->allowsAnyHttpMethod()) {
-            $this->defaultRouteData   = MatchedRouteData::from($parameterIndexNameMap, $route);
+            $this->defaultRouteData = MatchedRouteData::from($parameterIndexNameMap, $route);
         } else {
             $this->httpMethodRouteDataMap[] = [$route->getHttpMethods(), MatchedRouteData::from($parameterIndexNameMap, $route)];
         }
