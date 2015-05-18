@@ -17,16 +17,16 @@ All in all, this library provides the ability to match a supplied HTTP request
 Benchmarks
 ==========
 
-| Test Name                          | RapidRoute - Time | FastRoute - Time | Relative Difference | Change      |
-| ---------------------------------- | ----------------- | ---------------- | ------------------- | ----------- |
-| First static route                 | 0.0023435072      | 0.0010140720     | +0.0013294352       | 131% slower |
-| Last static route                  | 0.0027569150      | 0.0010000578     | +0.0017568572       | 176% slower |
-| First dynamic route                | 0.0040967143      | 0.0066185051     | -0.0025217908       | 62% faster  |
-| Last dynamic route                 | 0.0034137433      | 0.0086873559     | -0.0052736126       | 154% faster |
-| Non-existent route                 | 0.0026887293      | 0.0186565538     | -0.0159678245       | 594% faster |
-| Longest route                      | 0.0072993029      | 0.0094522497     | -0.0021529467       | 29% faster  |
-| Invalid HTTP method, static route  | 0.0026721540      | 0.0194136426     | -0.0167414887       | 627% faster |
-| Invalid HTTP method, dynamic route | 0.0035317977      | 0.0213736738     | -0.0178418761       | 505% faster |
+| Test Name                     | RapidRoute (ms) | FastRoute (ms) | Relative Difference | Change      |
+| ------------------------------| --------------- | -------------- | ------------------- | ----------- |
+| First static route            | 2.3522480       | 1.0000559      | +1.3521922          | 135% slower |
+| Last static route             | 2.7881594       | 1.0000604      | +1.7880990          | 179% slower |
+| First dynamic route           | 3.9641924       | 6.4614407      | -2.4972483          | 63% faster  |
+| Last dynamic route            | 3.4541984       | 8.7410117      | -5.2868134          | 153% faster |
+| Non-existent route            | 2.6851540       | 18.9082428     | -16.2230888         | 604% faster |
+| Longest route                 | 7.5024446       | 9.5564378      | -2.0539932          | 27% faster  |
+| Invalid method, static route  | 2.6818355       | 18.9918948     | -16.3100593         | 608% faster |
+| Invalid method, dynamic route | 3.5994058       | 21.6950974     | -18.0956916         | 503% faster |
 
 These results are generated using [this benchmark suite][bench] running on PHP 5.5.
 To register a comparable time, each route operation is run a large number of times per test.
