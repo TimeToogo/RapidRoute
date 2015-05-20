@@ -38,7 +38,9 @@ class RouteParser
     public function parse($pattern, array $conditions)
     {
         if (strlen($pattern) > 1 && $pattern[0] !== '/') {
-            throw new InvalidRoutePatternException('Invalid route pattern: non-root route must be prefixed with \'/\'');
+            throw new InvalidRoutePatternException(
+                sprintf('Invalid route pattern: non-root route must be prefixed with \'/\', \'%s\' given', $pattern)
+            );
         }
 
         $segments = [];
