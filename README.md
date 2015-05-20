@@ -255,15 +255,15 @@ $router->setDevelopmentMode($developmentMode);
 $result = $router->match($_SERVER['REQUEST_METHOD'], parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
 
 switch($result->getStatus()) {
-    case MatchStatus::NOT_FOUND:
+    case MatchResult::NOT_FOUND:
         render((new ErrorController())->notFound());
         break;
     
-    case MatchStatus::HTTP_METHOD_NOT_ALLOWED:
+    case MatchResult::HTTP_METHOD_NOT_ALLOWED:
         render((new ErrorController())->methodNotAllowed($result->getAllowedHttpMethods()));
         break;
     
-    case MatchStatus::FOUND:
+    case MatchResult::FOUND:
         // Dispatcher matched route to associated handler
         list($controller, $method) = $result->getRouteData()['handler'];
         $parameters = $result->getParameters();
