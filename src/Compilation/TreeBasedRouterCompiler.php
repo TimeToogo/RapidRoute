@@ -117,9 +117,12 @@ PHP;
         $code->append('}');
     }
 
-    protected function compileSegmentNodes(PhpBuilder $code, ChildrenNodeCollection $nodes, array $segmentVariables, array $parameters = array())
+    protected function compileSegmentNodes(PhpBuilder $code, ChildrenNodeCollection $nodes, array $segmentVariables, array $parameters = [])
     {
+        $originalParameters = $parameters;
         foreach ($nodes->getChildren() as $node) {
+            $parameters = $originalParameters;
+
             /** @var SegmentMatcher[] $segmentMatchers */
             $segmentMatchers  = $node->getMatchers();
 
