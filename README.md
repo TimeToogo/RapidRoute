@@ -135,7 +135,7 @@ $router->setDevelopmentMode($developmentMode);
 
 $result = $router->match($httpMethod, $uri);
 
-if($result->notFound()) {
+if($result->isNotFound()) {
     // 404 Not Found...
 } elseif ($result->isDisallowedHttpMethod()) {
     // 405 Method Not Allowed...
