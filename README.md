@@ -17,16 +17,16 @@ All in all, this library provides the ability to match a supplied HTTP request
 Benchmarks
 ==========
 
-| Test Name                     | RapidRoute (req/sec) | FastRoute (req/sec) | Difference | Change        |
-| ----------------------------- | -------------------- | ------------------- | ---------- | ------------- |
-| First static route            | 3385.28              | 2906.64             | +478.64    | 16.47% faster |
-| Last static route             | 3419.56              | 2901.09             | +518.47    | 17.87% faster |
-| First dynamic route           | 3428.94              | 2829.18             | +599.76    | 21.20% faster |
-| Last dynamic route            | 3379.56              | 2890.18             | +489.38    | 16.93% faster |
-| Non-existent route            | 3412.31              | 2823.27             | +589.04    | 20.86% faster |
-| Longest route                 | 3371.36              | 2853.40             | +517.96    | 18.15% faster |
-| Invalid method, static route  | 3125.81              | 2864.19             | +261.62    | 9.13% faster  |
-| Invalid method, dynamic route | 3402.57              | 2847.55             | +555.02    | 19.49% faster |
+| Test Name                     | RapidRoute (req/sec) | FastRoute (req/sec) | Change        |
+| ----------------------------- | -------------------- | ------------------- | ------------- |
+| First static route            | 3385.28              | 2906.64             | 16.47% faster |
+| Last static route             | 3419.56              | 2901.09             | 17.87% faster |
+| First dynamic route           | 3428.94              | 2829.18             | 21.20% faster |
+| Last dynamic route            | 3379.56              | 2890.18             | 16.93% faster |
+| Non-existent route            | 3412.31              | 2823.27             | 20.86% faster |
+| Longest route                 | 3371.36              | 2853.40             | 18.15% faster |
+| Invalid method, static route  | 3125.81              | 2864.19             | 9.13% faster  |
+| Invalid method, dynamic route | 3402.57              | 2847.55             | 19.49% faster |
 
 These results are generated using [this benchmark suite][bench] running on PHP 5.5 with opcache enabled.
 These results indicate a consistent 10-20% performance gain over FastRoute depending on the input uri and http method.
@@ -177,6 +177,10 @@ To define the routes, a familiar url structure is used:
   'category_id' => Pattern::DIGITS,
   'filter_by'   => Pattern::ALPHA_LOWER
 ]
+
+// You can also inline the parameter regexps using the following syntax
+// The following is equivalent to the previous route definition
+'/shop/category/{category_id:\d+}/product/search/{filter_by:[a-z]+}:{filter_value}'
 ```
 
 **Adding Routes**

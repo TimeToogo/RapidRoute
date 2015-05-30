@@ -105,6 +105,37 @@ class RouteParserTest extends RapidRouteTest
                     new ParameterSegment(['quantity'], '/^quantity\:(' . Pattern::DIGITS . ')$/'),
                 ]
             ],
+            [
+                '/{param:[0-9]+}',
+                [],
+                [new ParameterSegment(['param'], '/^([0-9]+)$/'),]
+            ],
+            [
+                '/{param:[\:]+}',
+                [],
+                [new ParameterSegment(['param'], '/^([\:]+)$/'),]
+            ],
+            [
+                // Inline regexps take precedence
+                '/{param:[a-z]+}',
+                ['param' => Pattern::APLHA_UPPER],
+                [new ParameterSegment(['param'], '/^([a-z]+)$/'),]
+            ],
+            [
+                '/abc{param1:.+}:{param2:.+}',
+                [],
+                [new ParameterSegment(['param1', 'param2'], '/^abc(.+)\:(.+)$/')]
+            ],
+            [
+                '/shop/{category:[\w]+}:{product:[\w]+}/buy/quantity:{quantity:[0-9]+}',
+                [],
+                [
+                    new StaticSegment('shop'),
+                    new ParameterSegment(['category', 'product'], '/^([\w]+)\:([\w]+)$/'),
+                    new StaticSegment('buy'),
+                    new ParameterSegment(['quantity'], '/^quantity\:([0-9]+)$/'),
+                ]
+            ],
         ];
     }
 

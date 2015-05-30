@@ -49,7 +49,7 @@ class RouteParser
         array_shift($patternSegments);
 
         foreach ($patternSegments as $key => $patternSegment) {
-            if ($this->matchRouteParameters($pattern, $patternSegment, $matches, $names)) {
+            if ($this->matchRouteParameters($pattern, $patternSegment, $conditions, $matches, $names)) {
                 $regex = $this->compileSegmentRegex($matches, $conditions);
 
                 $segments[] = new ParameterSegment($names, $regex);
@@ -61,7 +61,7 @@ class RouteParser
         return $segments;
     }
 
-    protected function matchRouteParameters($pattern, $patternSegment, &$matches, &$names)
+    protected function matchRouteParameters($pattern, $patternSegment, &$conditions, &$matches, &$names)
     {
         $matchedParameter = false;
         $names   = [];
@@ -73,6 +73,12 @@ class RouteParser
         foreach(str_split($patternSegment) as $character) {
             if($inParameter) {
                 if($character === '}') {
+                    if(strpos($current, ':') !== false) {
+                        $regex = substr($current, strpos($current, ':') + 1);
+                        $current = substr($current, 0, strpos($current, ':'));
+                        $conditions[$current] = $regex;
+                    }
+
                     $matches[] = [self::PARAMETER_PART, $current];
                     $names[] = $current;
                     $current = '';
