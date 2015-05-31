@@ -296,9 +296,9 @@ Notes
 Compilation
 ===========
 
-Given that this library route definitions compiles to plain PHP, there are much
+Given that this library compiles route definitions to plain PHP, there is much
 room for optimization. The current approach is using a tree structure matching
-by each segment in a uri (`'/shop/product'` is composed of the `'shop'` and `'product'` segments).
+each segment in a uri (`'/shop/product'` is composed of the `'shop'` and `'product'` segments).
 Currently the structure is compiled to nested `switch` and `if` blocks using
 optimized comparisons where applicable.
 
