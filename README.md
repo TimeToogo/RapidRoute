@@ -36,11 +36,11 @@ These results indicate a consistent 10-20% performance gain over FastRoute depen
 Installation
 ============
 
-This project is compatible with PHP 5.4+, there has been no tagged releases as of yet.
+This project is compatible with PHP 5.4+.
 It can be loaded via composer:
 
 ```
-composer require timetoogo/rapid-route dev-master
+composer require timetoogo/rapid-route ~1.0
 ```
 
 Router Usage
