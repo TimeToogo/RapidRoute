@@ -239,13 +239,13 @@ $router = new Router(
         $routes->param('user_id', Pattern::DIGITS);
 
         $routes->get('/', ['handler' => ['HomeController', 'index']]);
-        $routes->get('/user', ['handler' => ['UserController', 'index']);
-        $routes->get('/user/create', ['handler' => ['UserController', 'create']);
-        $routes->post('/user', ['handler' => ['UserController', 'store']);
-        $routes->get('/user/{user_id}', ['handler' => ['UserController', 'show']);
-        $routes->get('/user/{user_id}/edit', ['handler' => ['UserController', 'edit']);
-        $routes->add(['PUT', 'PATCH'], '/user/{user_id}', ['handler' => ['UserController', 'update']);
-        $routes->delete('/user/{user_id}', ['handler' => ['UserController', 'delete']);
+        $routes->get('/user', ['handler' => ['UserController', 'index']]);
+        $routes->get('/user/create', ['handler' => ['UserController', 'create']]);
+        $routes->post('/user', ['handler' => ['UserController', 'store']]);
+        $routes->get('/user/{user_id}', ['handler' => ['UserController', 'show']]);
+        $routes->get('/user/{user_id}/edit', ['handler' => ['UserController', 'edit']]);
+        $routes->add(['PUT', 'PATCH'], '/user/{user_id}', ['handler' => ['UserController', 'update']]);
+        $routes->delete('/user/{user_id}', ['handler' => ['UserController', 'delete']]);
     }
 );
 
