@@ -18,7 +18,7 @@ class CommonRouteSegmentRouterTest extends RouterTestBase
 
     protected function definitions(RouteCollection $routes)
     {
-        $routes->param('p2', Pattern::APLHA);
+        $routes->param('p2', Pattern::ALPHA);
 
         $routes->get('/route1/{p1}/{p2}/{p3}', ['name' => 'route1']);
         $routes->get('/route2/{p1}/{p2}/{p3}', ['name' => 'route2']);

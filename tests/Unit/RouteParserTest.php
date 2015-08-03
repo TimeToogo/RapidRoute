@@ -67,40 +67,40 @@ class RouteParserTest extends RapidRouteTest
             ],
             [
                 '/{param}',
-                ['param' => Pattern::APLHA_NUM],
-                [ParameterSegment::from('param', Pattern::APLHA_NUM)]
+                ['param' => Pattern::ALPHA_NUM],
+                [ParameterSegment::from('param', Pattern::ALPHA_NUM)]
             ],
             [
                 '/user/{id}/profile/{type}',
-                ['id' => Pattern::DIGITS, 'type' => Pattern::APLHA_LOWER],
+                ['id' => Pattern::DIGITS, 'type' => Pattern::ALPHA_LOWER],
                 [
                     new StaticSegment('user'),
                     ParameterSegment::from('id', Pattern::DIGITS),
                     new StaticSegment('profile'),
-                    ParameterSegment::from('type', Pattern::APLHA_LOWER),
+                    ParameterSegment::from('type', Pattern::ALPHA_LOWER),
                 ]
             ],
             [
                 '/prefix{param}',
-                ['param' => Pattern::APLHA_NUM],
-                [new ParameterSegment(['param'], '/^prefix(' . Pattern::APLHA_NUM . ')$/')]
+                ['param' => Pattern::ALPHA_NUM],
+                [new ParameterSegment(['param'], '/^prefix(' . Pattern::ALPHA_NUM . ')$/')]
             ],
             [
                 '/{param}suffix',
-                ['param' => Pattern::APLHA_NUM],
-                [new ParameterSegment(['param'], '/^(' . Pattern::APLHA_NUM . ')suffix$/')]
+                ['param' => Pattern::ALPHA_NUM],
+                [new ParameterSegment(['param'], '/^(' . Pattern::ALPHA_NUM . ')suffix$/')]
             ],
             [
                 '/abc{param1}:{param2}',
-                ['param1' => Pattern::ANY, 'param2' => Pattern::APLHA],
-                [new ParameterSegment(['param1', 'param2'], '/^abc(' . Pattern::ANY . ')\:(' . Pattern::APLHA . ')$/')]
+                ['param1' => Pattern::ANY, 'param2' => Pattern::ALPHA],
+                [new ParameterSegment(['param1', 'param2'], '/^abc(' . Pattern::ANY . ')\:(' . Pattern::ALPHA . ')$/')]
             ],
             [
                 '/shop/{category}:{product}/buy/quantity:{quantity}',
-                ['category' => Pattern::APLHA, 'product' => Pattern::APLHA, 'quantity' => Pattern::DIGITS],
+                ['category' => Pattern::ALPHA, 'product' => Pattern::ALPHA, 'quantity' => Pattern::DIGITS],
                 [
                     new StaticSegment('shop'),
-                    new ParameterSegment(['category', 'product'], '/^(' . Pattern::APLHA . ')\:(' . Pattern::APLHA . ')$/'),
+                    new ParameterSegment(['category', 'product'], '/^(' . Pattern::ALPHA . ')\:(' . Pattern::ALPHA . ')$/'),
                     new StaticSegment('buy'),
                     new ParameterSegment(['quantity'], '/^quantity\:(' . Pattern::DIGITS . ')$/'),
                 ]
@@ -118,7 +118,7 @@ class RouteParserTest extends RapidRouteTest
             [
                 // Inline regexps take precedence
                 '/{param:[a-z]+}',
-                ['param' => Pattern::APLHA_UPPER],
+                ['param' => Pattern::ALPHA_UPPER],
                 [new ParameterSegment(['param'], '/^([a-z]+)$/'),]
             ],
             [

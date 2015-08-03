@@ -131,19 +131,19 @@ class RouteTreeOptimizer
                 case Pattern::asRegex(Pattern::DIGITS):
                     return new ExpressionMatcher('ctype_digit({segment})', $parameterKeys);
 
-                case Pattern::asRegex(Pattern::APLHA):
+                case Pattern::asRegex(Pattern::ALPHA):
                     return new ExpressionMatcher('ctype_alpha({segment})', $parameterKeys);
 
-                case Pattern::asRegex(Pattern::APLHA_LOWER):
+                case Pattern::asRegex(Pattern::ALPHA_LOWER):
                     return new ExpressionMatcher('ctype_lower({segment})', $parameterKeys);
 
-                case Pattern::asRegex(Pattern::APLHA_UPPER):
+                case Pattern::asRegex(Pattern::ALPHA_UPPER):
                     return new ExpressionMatcher('ctype_upper({segment})', $parameterKeys);
 
-                case Pattern::asRegex(Pattern::APLHA_NUM):
+                case Pattern::asRegex(Pattern::ALPHA_NUM):
                     return new ExpressionMatcher('ctype_alnum({segment})', $parameterKeys);
 
-                case Pattern::asRegex(Pattern::APLHA_NUM_DASH):
+                case Pattern::asRegex(Pattern::ALPHA_NUM_DASH):
                     return new ExpressionMatcher('ctype_alnum(str_replace(\'-\', \'\', {segment}))', $parameterKeys);
             }
         }

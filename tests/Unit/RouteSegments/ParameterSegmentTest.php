@@ -26,7 +26,7 @@ class ParameterSegmentTest extends RouteSegmentTestBase
      */
     protected function buildDifferentRouteSegment()
     {
-        return ParameterSegment::from('param', Pattern::APLHA_NUM);
+        return ParameterSegment::from('param', Pattern::ALPHA_NUM);
     }
 
     protected function assertBuildsCorrectMatcher(RouteSegment $segment, SegmentMatcher $matcher, array $parameters)

@@ -29,11 +29,11 @@ class ComplexParameterPatternsRouterTest extends RouterTestBase
         $routes->get([
             '/e/{digits}-{alpha}:{exclaim}',
             'digits' => Pattern::DIGITS,
-            'alpha' => Pattern::APLHA,
+            'alpha' => Pattern::ALPHA,
             'exclaim' => '!{3,5}'
         ], ['name' => 'filtered-multi-param']);
 
-        $routes->get(['/f/{name}-is-awesome-at-{thing}', 'name' => '[A-Z]?[a-z]+', 'thing' => Pattern::APLHA_LOWER], ['name' => 'sentence-multi-param']);
+        $routes->get(['/f/{name}-is-awesome-at-{thing}', 'name' => '[A-Z]?[a-z]+', 'thing' => Pattern::ALPHA_LOWER], ['name' => 'sentence-multi-param']);
     }
 
     /**

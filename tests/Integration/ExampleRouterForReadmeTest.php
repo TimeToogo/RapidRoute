@@ -21,7 +21,7 @@ class ExampleRouterForReadmeTest extends RouterTestBase
 
     protected function definitions(RouteCollection $routes)
     {
-        $routes->param('post_slug', Pattern::APLHA_NUM_DASH);
+        $routes->param('post_slug', Pattern::ALPHA_NUM_DASH);
 
         $routes->get('/', ['name' => 'home']);
         $routes->get('/blog', ['name' => 'blog.index']);
