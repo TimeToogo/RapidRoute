@@ -44,7 +44,7 @@ class EdgeCasesRouterTest extends RouterTestBase
         $routes->post('/allowed-methods/{parameter}', ['name' => 'allowed-methods.dynamic']);
 
         $routes->get(['/complex-methods/{param}/foo/bar', 'param' => Pattern::DIGITS], ['name' => 'complex-methods.first']);
-        $routes->post(['/complex-methods/{param}/foo/{param2}', 'param' => Pattern::APLHA_NUM], ['name' => 'complex-methods.second']);
+        $routes->post(['/complex-methods/{param}/foo/{param2}', 'param' => Pattern::ALPHA_NUM], ['name' => 'complex-methods.second']);
     }
 
     /**

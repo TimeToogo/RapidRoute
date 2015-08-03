@@ -15,15 +15,15 @@ final class Pattern
 
     const DIGITS = '\d+';
 
-    const APLHA = '[a-zA-Z]+';
+    const ALPHA = '[a-zA-Z]+';
 
-    const APLHA_NUM = '[a-zA-Z\d]+';
+    const ALPHA_NUM = '[a-zA-Z\d]+';
 
-    const APLHA_NUM_DASH = '[a-zA-Z\d\-]+';
+    const ALPHA_NUM_DASH = '[a-zA-Z\d\-]+';
 
-    const APLHA_UPPER = '[A-Z]+';
+    const ALPHA_UPPER = '[A-Z]+';
 
-    const APLHA_LOWER = '[a-z]+';
+    const ALPHA_LOWER = '[a-z]+';
 
     /**
      * @param string $pattern

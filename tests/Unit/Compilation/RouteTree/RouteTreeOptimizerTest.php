@@ -110,11 +110,11 @@ class RouteTreeOptimizerTest extends RapidRouteTest
                             [
                                 RegexMatcher::from(Pattern::ANY, 0),
                                 RegexMatcher::from(Pattern::DIGITS, 1),
-                                RegexMatcher::from(Pattern::APLHA, 2),
-                                RegexMatcher::from(Pattern::APLHA_LOWER, 3),
-                                RegexMatcher::from(Pattern::APLHA_UPPER, 4),
-                                RegexMatcher::from(Pattern::APLHA_NUM, 5),
-                                RegexMatcher::from(Pattern::APLHA_NUM_DASH, 6),
+                                RegexMatcher::from(Pattern::ALPHA, 2),
+                                RegexMatcher::from(Pattern::ALPHA_LOWER, 3),
+                                RegexMatcher::from(Pattern::ALPHA_UPPER, 4),
+                                RegexMatcher::from(Pattern::ALPHA_NUM, 5),
+                                RegexMatcher::from(Pattern::ALPHA_NUM_DASH, 6),
                                 RegexMatcher::from('some\-custom\-pattern!{1,100}', 7),
                             ],
                             new ChildrenNodeCollection([])

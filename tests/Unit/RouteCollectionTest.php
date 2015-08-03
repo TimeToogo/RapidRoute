@@ -81,7 +81,7 @@ class RouteCollectionTest extends RapidRouteTest
 
     public function testAddPassesGlobalParameterConditionsToRouteParser()
     {
-        $this->collection->param('global_param', Pattern::APLHA);
+        $this->collection->param('global_param', Pattern::ALPHA);
         $this->collection->params([
             'another_global_param' => Pattern::DIGITS,
             'removed_param' => Pattern::ANY,
@@ -93,7 +93,7 @@ class RouteCollectionTest extends RapidRouteTest
         $this->assertSame('/pattern', $this->parserMock->lastParsed[0]);
         $this->assertSame([
             'param'                => 'regex',
-            'global_param'         => Pattern::APLHA,
+            'global_param'         => Pattern::ALPHA,
             'another_global_param' => Pattern::DIGITS,
         ], $this->parserMock->lastParsed[1]);
     }

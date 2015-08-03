@@ -20,15 +20,15 @@ class BasicParameterPatternsRouterTest extends RouterTestBase
     {
         $routes->get(['/digits/{param}', 'param' => Pattern::DIGITS], ['name' => 'digits']);
 
-        $routes->get(['/alpha/{param}', 'param' => Pattern::APLHA], ['name' => 'alpha']);
+        $routes->get(['/alpha/{param}', 'param' => Pattern::ALPHA], ['name' => 'alpha']);
 
-        $routes->get(['/alpha_low/{param}', 'param' => Pattern::APLHA_LOWER], ['name' => 'alpha_low']);
+        $routes->get(['/alpha_low/{param}', 'param' => Pattern::ALPHA_LOWER], ['name' => 'alpha_low']);
 
-        $routes->get(['/alpha_up/{param}', 'param' => Pattern::APLHA_UPPER], ['name' => 'alpha_up']);
+        $routes->get(['/alpha_up/{param}', 'param' => Pattern::ALPHA_UPPER], ['name' => 'alpha_up']);
 
-        $routes->get(['/alpha_num/{param}', 'param' => Pattern::APLHA_NUM], ['name' => 'alpha_num']);
+        $routes->get(['/alpha_num/{param}', 'param' => Pattern::ALPHA_NUM], ['name' => 'alpha_num']);
 
-        $routes->get(['/alpha_num_dash/{param}', 'param' => Pattern::APLHA_NUM_DASH], ['name' => 'alpha_num_dash']);
+        $routes->get(['/alpha_num_dash/{param}', 'param' => Pattern::ALPHA_NUM_DASH], ['name' => 'alpha_num_dash']);
 
         $routes->get(['/any/{param}', 'param' => Pattern::ANY], ['name' => 'any']);
 
