@@ -144,10 +144,10 @@ class RouteCollection
 
         if(is_array($pattern)) {
             if(!isset($pattern[0]) || !is_string($pattern[0])) {
-                throw new InvalidRoutePatternException(
+                throw new InvalidRoutePatternException(sprintf(
                     'Cannot add route: route pattern array must have the first element containing the pattern string, %s given',
                     isset($pattern[0]) ? gettype($pattern[0]) : 'none'
-                );
+                ));
             }
 
             $patternString = $pattern[0];
@@ -157,10 +157,10 @@ class RouteCollection
             return [$patternString, $parameterConditions];
         }
 
-        throw new InvalidRoutePatternException(
+        throw new InvalidRoutePatternException(sprintf(
             'Cannot add route: route pattern must be a pattern string or array, %s given',
             gettype($pattern)
-        );
+        ));
     }
 
     /**
