@@ -26,5 +26,5 @@ abstract class RouteSegment
      *
      * @return SegmentMatcher
      */
-    public abstract function getMatcher(array &$parameterIndexNameMap);
+    abstract public function getMatcher(array &$parameterIndexNameMap);
 }

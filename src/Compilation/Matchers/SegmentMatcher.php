@@ -85,5 +85,5 @@ abstract class SegmentMatcher
      *
      * @return string
      */
-    protected abstract function getMatchHash();
+    abstract protected function getMatchHash();
 }
