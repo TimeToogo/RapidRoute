@@ -40,7 +40,7 @@ This project is compatible with PHP 5.4+.
 It can be loaded via composer:
 
 ```
-composer require timetoogo/rapid-route ~1.0
+composer require timetoogo/rapid-route ~2.0
 ```
 
 Router Usage
