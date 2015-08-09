@@ -29,7 +29,7 @@ class TwoParameterRouterIssue1Test extends RouterTestBase
      * [
      *      'GET',
      *      '/user/1',
-     *      RouterResult::found(['route_data'], ['id' => '1'])
+     *      MatchResult::found(['route_data'], ['id' => '1'])
      * ]
      *
      * @return array[]
