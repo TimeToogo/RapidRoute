@@ -29,8 +29,12 @@ class CompiledRouter
         callable $routerCompilerFactory = null,
         $forceCompile = false
     ) {
-        if (file_exists($compiledRouterPath) && !$forceCompile) {
-            return require $compiledRouterPath;
+        if (!$forceCompile) {
+            $compiledRouter = @include $compiledRouterPath;
+
+            if ($compiledRouter) {
+                return $compiledRouter;
+            }
         }
 
         /** @var RouteCollection $routes */
